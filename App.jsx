@@ -1353,11 +1353,15 @@ function DashboardAdmin() {
       .filter((c) => c.producto !== "Crédito de nómina")
       .reduce((s, c) => s + (c.monto || 0), 0);
     const ingresosTotales = ingresosNomina + ingresosMotos;
-    const presupuesto = ejecutivosPeriodo
+    const presupuestoNomina = ejecutivosPeriodo
       .filter((e) => e.tipo === "nómina")
       .reduce((s, e) => s + (e.meta || 0), 0);
-    // Cumplimiento y falta se calculan SOLO contra nómina porque el presupuesto es de nómina
-    const pctCumplimiento = presupuesto > 0 ? (ingresosNomina / presupuesto) * 100 : 0;
+    const presupuestoMotos = ejecutivosPeriodo
+      .filter((e) => e.tipo === "motos")
+      .reduce((s, e) => s + (e.meta_dinero || 0), 0);
+    const presupuesto = presupuestoNomina + presupuestoMotos;
+    // Cumplimiento y falta se calculan contra presupuesto total (nómina meta + motos meta_dinero)
+    const pctCumplimiento = presupuesto > 0 ? (ingresosTotales / presupuesto) * 100 : 0;
     const totalDisp = dispersados.length;
     const dispNomina = dispersados.filter((c) => c.producto === "Crédito de nómina").length;
     const dispMotos = dispersados.filter((c) => c.producto !== "Crédito de nómina").length;
@@ -1369,13 +1373,13 @@ function DashboardAdmin() {
         ? allClients.filter((c) => c.anio_registro === anio).length
         : allClients.length;
     const tasaConversion = totalClientes > 0 ? (totalDisp / totalClientes) * 100 : 0;
-    // Proyección (solo mensual, mes actual) — basada en ingresosNomina para comparar con presupuesto
+    // Proyección (solo mensual, mes actual) — basada en ingresosTotales para comparar con presupuesto combinado
     const diasMes = getDaysInMonth(mes, anio);
     let diaEfectivo = today.getDate();
     if (anio < today.getFullYear() || (anio === today.getFullYear() && mes < today.getMonth() + 1)) diaEfectivo = diasMes;
     else if (anio > today.getFullYear() || (anio === today.getFullYear() && mes > today.getMonth() + 1)) diaEfectivo = 0;
-    const proyeccion = modo === "mensual" && diaEfectivo > 0 ? (ingresosNomina / diaEfectivo) * diasMes : 0;
-    const falta = Math.max(presupuesto - ingresosNomina, 0);
+    const proyeccion = modo === "mensual" && diaEfectivo > 0 ? (ingresosTotales / diaEfectivo) * diasMes : 0;
+    const falta = Math.max(presupuesto - ingresosTotales, 0);
     return {
       ingresosTotales, ingresosNomina, ingresosMotos, presupuesto, pctCumplimiento,
       totalDisp, dispNomina, dispMotos, ticketPromedio, ticketPromedioNomina, tasaConversion, totalClientes, proyeccion, falta, diasMes, diaEfectivo,
@@ -1418,8 +1422,9 @@ function DashboardAdmin() {
       return a.mes - b.mes;
     });
     result.forEach((item) => {
-      const ejMes = allEjecutivos.filter((e) => e.mes === item.mes && e.anio === item.anio && e.tipo === "nómina");
-      item.presupuesto = ejMes.reduce((s, e) => s + (e.meta || 0), 0);
+      const ejNomMes = allEjecutivos.filter((e) => e.mes === item.mes && e.anio === item.anio && e.tipo === "nómina");
+      const ejMotMes = allEjecutivos.filter((e) => e.mes === item.mes && e.anio === item.anio && e.tipo === "motos");
+      item.presupuesto = ejNomMes.reduce((s, e) => s + (e.meta || 0), 0) + ejMotMes.reduce((s, e) => s + (e.meta_dinero || 0), 0);
     });
     // Si es acumulado o mensual, rellenar meses sin datos
     if (targetAnio) {
@@ -1427,10 +1432,11 @@ function DashboardAdmin() {
       for (let i = 1; i <= maxMes; i++) {
         const k = `${i}`;
         if (!meses[k]) {
-          const ejMes = allEjecutivos.filter((e) => e.mes === i && e.anio === targetAnio && e.tipo === "nómina");
+          const ejNomMes = allEjecutivos.filter((e) => e.mes === i && e.anio === targetAnio && e.tipo === "nómina");
+          const ejMotMes = allEjecutivos.filter((e) => e.mes === i && e.anio === targetAnio && e.tipo === "motos");
           result.push({
             key: k, label: MESES[i - 1].slice(0, 3), ingresos: 0, clientes: 0,
-            mes: i, anio: targetAnio, presupuesto: ejMes.reduce((s, e) => s + (e.meta || 0), 0),
+            mes: i, anio: targetAnio, presupuesto: ejNomMes.reduce((s, e) => s + (e.meta || 0), 0) + ejMotMes.reduce((s, e) => s + (e.meta_dinero || 0), 0),
           });
         }
       }
@@ -1564,8 +1570,8 @@ function DashboardAdmin() {
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 14, marginBottom: 18 }}>
           {[
             { icon: "💰", label: "Ingresos totales", value: formatMoney(Math.round(finance.ingresosTotales)), color: COLORS.primary, sub: `${finance.dispNomina} nómina + ${finance.dispMotos} motos dispersados` },
-            { icon: "🎯", label: "Presupuesto (nómina)", value: formatMoney(Math.round(finance.presupuesto)), color: COLORS.blue, sub: finance.presupuesto > 0 ? `${finance.pctCumplimiento.toFixed(1)}% cumplido` : "Sin meta" },
-            { icon: "📈", label: modo === "mensual" ? "Proyección nómina" : "Ticket promedio", value: modo === "mensual" ? formatMoney(Math.round(finance.proyeccion)) : formatMoney(Math.round(finance.ticketPromedio)), color: modo === "mensual" && finance.proyeccion >= finance.presupuesto ? COLORS.green : COLORS.yellow, sub: modo === "mensual" ? (finance.proyeccion >= finance.presupuesto ? "¡Superaría meta!" : "Por debajo de meta") : `por operación` },
+            { icon: "🎯", label: "Presupuesto total", value: formatMoney(Math.round(finance.presupuesto)), color: COLORS.blue, sub: finance.presupuesto > 0 ? `${finance.pctCumplimiento.toFixed(1)}% cumplido` : "Sin meta" },
+            { icon: "📈", label: modo === "mensual" ? "Proyección total" : "Ticket promedio", value: modo === "mensual" ? formatMoney(Math.round(finance.proyeccion)) : formatMoney(Math.round(finance.ticketPromedio)), color: modo === "mensual" && finance.presupuesto > 0 ? (finance.proyeccion >= finance.presupuesto ? COLORS.green : (finance.proyeccion / finance.presupuesto) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.yellow, sub: modo === "mensual" && finance.presupuesto > 0 ? `${((finance.proyeccion / finance.presupuesto) * 100).toFixed(1)}% del presupuesto` : modo === "mensual" ? "Sin presupuesto" : `por operación` },
             { icon: "📊", label: "Tasa de conversión", value: `${finance.tasaConversion.toFixed(1)}%`, color: finance.tasaConversion >= 50 ? COLORS.green : finance.tasaConversion >= 25 ? COLORS.yellow : COLORS.red, sub: `${finance.totalDisp} de ${finance.totalClientes} clientes` },
           ].map((kpi, i) => (
             <div key={i} style={{
@@ -1587,7 +1593,7 @@ function DashboardAdmin() {
           {[
             { icon: "💵", label: "Nómina", value: formatMoney(Math.round(finance.ingresosNomina)), color: COLORS.primary, sub: `${finance.dispNomina} créditos dispersados` },
             { icon: "🏍", label: "Motos", value: formatMoney(Math.round(finance.ingresosMotos)), color: COLORS.moto, sub: `${finance.dispMotos} unidades — Arrend. + Financ.` },
-            { icon: "🔻", label: "Falta por vender", value: finance.falta === 0 ? "¡Meta alcanzada!" : formatMoney(Math.round(finance.falta)), color: finance.falta === 0 ? COLORS.green : COLORS.red, sub: finance.falta === 0 ? "Excelente trabajo" : "para llegar a presupuesto nómina" },
+            { icon: "🔻", label: "Falta por vender", value: finance.falta === 0 ? "¡Meta alcanzada!" : formatMoney(Math.round(finance.falta)), color: finance.falta === 0 ? COLORS.green : COLORS.red, sub: finance.falta === 0 ? "Excelente trabajo" : "para llegar a presupuesto total" },
             { icon: "🧾", label: "Ticket promedio", value: formatMoney(Math.round(finance.ticketPromedio)), color: COLORS.purple, sub: `${finance.totalDisp} operaciones totales` },
           ].map((kpi, i) => (
             <div key={i} style={{
@@ -1635,9 +1641,9 @@ function DashboardAdmin() {
               )}
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: COLORS.textLight }}>
-              <span>💰 Nómina real: {formatMoney(Math.round(finance.ingresosNomina))}</span>
+              <span>💰 Ingresos reales: {formatMoney(Math.round(finance.ingresosTotales))}</span>
               {modo === "mensual" && <span style={{ color: COLORS.dark, fontWeight: 600 }}>▾ Proyección: {formatMoney(Math.round(finance.proyeccion))}</span>}
-              <span>🎯 Meta: {formatMoney(Math.round(finance.presupuesto))}</span>
+              <span>🎯 Presupuesto: {formatMoney(Math.round(finance.presupuesto))}</span>
             </div>
           </div>
         )}
@@ -1969,21 +1975,24 @@ function TablaClientes({ perfil }) {
     loadEjecutivos();
   }, []);
 
-  // Cargar presupuesto (suma de metas de todos los ejecutivos del mes)
+  // Cargar presupuesto (suma de metas nómina + meta_dinero motos de todos los ejecutivos del mes)
   useEffect(() => {
     const loadPresupuesto = async () => {
       try {
         await fetchWithRetry(async () => {
           const { data, error } = await supabase
             .from("ejecutivos")
-            .select("meta, tipo")
+            .select("meta, meta_dinero, tipo")
             .eq("mes", mes)
             .eq("anio", anio);
           if (error) throw error;
-          const totalMetas = (data || [])
+          const totalNomina = (data || [])
             .filter((e) => e.tipo === "nómina")
             .reduce((sum, e) => sum + (e.meta || 0), 0);
-          setPresupuestoTotal(totalMetas);
+          const totalMotos = (data || [])
+            .filter((e) => e.tipo === "motos")
+            .reduce((sum, e) => sum + (e.meta_dinero || 0), 0);
+          setPresupuestoTotal(totalNomina + totalMotos);
         });
       } catch (err) {
         console.error("Error loading presupuesto tras reintentos:", err);
@@ -2267,25 +2276,32 @@ function TablaClientes({ perfil }) {
                 {/* Fila de métricas: proyección + falta */}
                 <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                   {/* Proyección al cierre */}
-                  <div style={{
-                    flex: 1, minWidth: 120, padding: "6px 10px", borderRadius: 8,
-                    background: budgetData.pctDiffProyeccion >= 0 ? COLORS.greenBg : COLORS.redBg,
-                    border: `1px solid ${budgetData.pctDiffProyeccion >= 0 ? COLORS.green : COLORS.red}22`,
-                  }}>
-                    <p style={{ fontSize: 9, fontWeight: 700, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>📈 Proyección cierre</p>
-                    <p style={{
-                      fontSize: 14, fontWeight: 800, margin: "2px 0 0",
-                      color: budgetData.pctDiffProyeccion >= 0 ? COLORS.green : COLORS.red,
-                    }}>
-                      {formatMoney(Math.round(budgetData.proyeccion))}
-                    </p>
-                    <p style={{
-                      fontSize: 10, fontWeight: 600, margin: "1px 0 0",
-                      color: budgetData.pctDiffProyeccion >= 0 ? COLORS.green : COLORS.red,
-                    }}>
-                      {budgetData.pctDiffProyeccion >= 0 ? "▲" : "▼"} {Math.abs(budgetData.pctDiffProyeccion).toFixed(1)}% vs presupuesto
-                    </p>
-                  </div>
+                  {(() => {
+                    const pctProy = budgetData.presupuesto > 0 ? (budgetData.proyeccion / budgetData.presupuesto) * 100 : 0;
+                    const proyColor = pctProy >= 100 ? COLORS.green : pctProy >= 70 ? COLORS.yellow : COLORS.red;
+                    const proyBg = pctProy >= 100 ? COLORS.greenBg : pctProy >= 70 ? COLORS.yellowBg : COLORS.redBg;
+                    return (
+                      <div style={{
+                        flex: 1, minWidth: 120, padding: "6px 10px", borderRadius: 8,
+                        background: proyBg,
+                        border: `1px solid ${proyColor}22`,
+                      }}>
+                        <p style={{ fontSize: 9, fontWeight: 700, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>📈 Proyección cierre</p>
+                        <p style={{
+                          fontSize: 14, fontWeight: 800, margin: "2px 0 0",
+                          color: proyColor,
+                        }}>
+                          {formatMoney(Math.round(budgetData.proyeccion))}
+                        </p>
+                        <p style={{
+                          fontSize: 10, fontWeight: 600, margin: "1px 0 0",
+                          color: proyColor,
+                        }}>
+                          {pctProy.toFixed(1)}% del presupuesto
+                        </p>
+                      </div>
+                    );
+                  })()}
 
                   {/* Falta por vender */}
                   <div style={{
@@ -2317,7 +2333,7 @@ function TablaClientes({ perfil }) {
                   ⚠️ Sin presupuesto configurado para {MESES[mes - 1]}
                 </p>
                 <p style={{ fontSize: 10, color: COLORS.textLight, margin: "4px 0 0" }}>
-                  Configura las metas en Resumen Nómina
+                  Configura las metas en Catálogo de Ejecutivos
                 </p>
               </div>
             )}
@@ -3714,7 +3730,7 @@ function ResumenNomina() {
           <KPICardNomina icon="💰" label="Vendido real" value={formatMoney(totals.real)} sub={`${totals.avance.toFixed(1)}% de la meta`} color={COLORS.primary} />
           <KPICardNomina icon="✅" label="Clientes dispersados" value={totals.clientesDisp} sub="operaciones cerradas" color={COLORS.green} />
           <KPICardNomina icon="💵" label="Ticket promedio" value={formatMoney(Math.round(totals.ticketPromedio))} sub="por crédito dispersado" color={COLORS.blue} />
-          <KPICardNomina icon="📈" label="Proyección al cierre" value={formatMoney(Math.round(totals.proyeccion))} sub={totals.proyeccion >= totals.meta ? "¡Superaría la meta!" : "Por debajo de la meta"} color={totals.proyeccion >= totals.meta ? COLORS.green : COLORS.yellow} />
+          <KPICardNomina icon="📈" label="Proyección al cierre" value={formatMoney(Math.round(totals.proyeccion))} sub={totals.meta > 0 ? `${((totals.proyeccion / totals.meta) * 100).toFixed(1)}% del presupuesto` : "Sin meta"} color={totals.meta > 0 ? ((totals.proyeccion / totals.meta) * 100 >= 100 ? COLORS.green : (totals.proyeccion / totals.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.yellow} />
           <KPICardNomina icon="🔻" label="Falta por vender" value={formatMoney(totals.falta)} color={COLORS.red} />
         </div>
 
@@ -3781,9 +3797,14 @@ function ResumenNomina() {
                       </div>
                     </td>
                     <td style={{ padding: "14px 16px", fontSize: 14, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
-                      <span style={{ color: ej.proyeccion >= ej.meta ? COLORS.green : COLORS.yellow }}>
+                      <span style={{ color: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.yellow }}>
                         {formatMoney(Math.round(ej.proyeccion))}
                       </span>
+                      {ej.meta > 0 && (
+                        <p style={{ fontSize: 10, fontWeight: 700, margin: "2px 0 0", color: (ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red }}>
+                          {((ej.proyeccion / ej.meta) * 100).toFixed(0)}% del presupuesto
+                        </p>
+                      )}
                     </td>
                     <td style={{ padding: "14px 16px", fontSize: 14, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                       <span style={{ color: ej.falta === 0 ? COLORS.green : COLORS.red }}>
@@ -3823,9 +3844,14 @@ function ResumenNomina() {
                   <ProgressBar pct={totals.avance} color={COLORS.primary} />
                 </td>
                 <td style={{ padding: "14px 16px", fontWeight: 700, fontSize: 14, fontVariantNumeric: "tabular-nums" }}>
-                  <span style={{ color: totals.proyeccion >= totals.meta ? COLORS.green : COLORS.yellow }}>
+                  <span style={{ color: totals.meta > 0 ? ((totals.proyeccion / totals.meta) * 100 >= 100 ? COLORS.green : (totals.proyeccion / totals.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.yellow }}>
                     {formatMoney(Math.round(totals.proyeccion))}
                   </span>
+                  {totals.meta > 0 && (
+                    <p style={{ fontSize: 10, fontWeight: 700, margin: "2px 0 0", color: (totals.proyeccion / totals.meta) * 100 >= 100 ? "#34D399" : (totals.proyeccion / totals.meta) * 100 >= 70 ? "#FCD34D" : "#FCA5A5" }}>
+                      {((totals.proyeccion / totals.meta) * 100).toFixed(0)}% del presupuesto
+                    </p>
+                  )}
                 </td>
                 <td style={{ padding: "14px 16px", fontWeight: 700, fontSize: 14, fontVariantNumeric: "tabular-nums" }}>
                   <span style={{ color: totals.falta === 0 ? COLORS.green : "#FF8A8A" }}>
@@ -3864,6 +3890,21 @@ function ResumenNomina() {
                   </span>
                 </div>
                 <ProgressBar pct={ej.avance} color={pc.color} />
+                {/* Proyección */}
+                {ej.meta > 0 && (
+                  <div style={{
+                    marginTop: 10, padding: "8px 12px", borderRadius: 8, textAlign: "center",
+                    background: (ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.greenBg : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellowBg : COLORS.redBg,
+                  }}>
+                    <p style={{ fontSize: 9, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proyección al cierre</p>
+                    <p style={{ fontSize: 16, fontWeight: 800, margin: "2px 0 0", color: (ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red }}>
+                      {formatMoney(Math.round(ej.proyeccion))}
+                    </p>
+                    <p style={{ fontSize: 10, fontWeight: 700, margin: "2px 0 0", color: (ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red }}>
+                      {((ej.proyeccion / ej.meta) * 100).toFixed(0)}% del presupuesto
+                    </p>
+                  </div>
+                )}
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
                   <div>
                     <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>Real</p>
@@ -4323,12 +4364,14 @@ function ResumenMotos() {
 
       const avance = ej.meta > 0 ? (real / ej.meta) * 100 : 0;
       const proyeccion = diasTranscurridos > 0 ? (real / diasTranscurridos) * diasMes : 0;
+      const proyeccionDinero = diasTranscurridos > 0 ? (montoTotal / diasTranscurridos) * diasMes : 0;
       const falta = Math.max(ej.meta - real, 0);
       const ticketPromedio = real > 0 ? montoTotal / real : 0;
       const metaDinero = ej.meta_dinero || 0;
       const avanceDinero = metaDinero > 0 ? (montoTotal / metaDinero) * 100 : 0;
       const faltaDinero = Math.max(metaDinero - montoTotal, 0);
-      return { ...ej, real, arrendamiento, financiamiento, montoTotal, montoArrendamiento, montoFinanciamiento, ticketPromedio, avance, proyeccion, falta, metaDinero, avanceDinero, faltaDinero };
+      const pctProyDinero = metaDinero > 0 ? (proyeccionDinero / metaDinero) * 100 : 0;
+      return { ...ej, real, arrendamiento, financiamiento, montoTotal, montoArrendamiento, montoFinanciamiento, ticketPromedio, avance, proyeccion, proyeccionDinero, falta, metaDinero, avanceDinero, faltaDinero, pctProyDinero };
     });
   }, [motosEjecutivos, clients, diasTranscurridos, diasMes]);
 
@@ -4343,11 +4386,13 @@ function ResumenMotos() {
     const ticketProm = real > 0 ? montoTotal / real : 0;
     const avance = meta > 0 ? (real / meta) * 100 : 0;
     const proyeccion = diasTranscurridos > 0 ? (real / diasTranscurridos) * diasMes : 0;
+    const proyeccionDinero = diasTranscurridos > 0 ? (montoTotal / diasTranscurridos) * diasMes : 0;
     const falta = Math.max(meta - real, 0);
     const metaDinero = tableData.reduce((s, e) => s + (e.metaDinero || 0), 0);
     const avanceDinero = metaDinero > 0 ? (montoTotal / metaDinero) * 100 : 0;
     const faltaDinero = Math.max(metaDinero - montoTotal, 0);
-    return { meta, real, avance, proyeccion, falta, arrendamiento: arr, financiamiento: fin, montoTotal, montoArrendamiento: montoArr, montoFinanciamiento: montoFin, ticketPromedio: ticketProm, metaDinero, avanceDinero, faltaDinero };
+    const pctProyDinero = metaDinero > 0 ? (proyeccionDinero / metaDinero) * 100 : 0;
+    return { meta, real, avance, proyeccion, proyeccionDinero, falta, arrendamiento: arr, financiamiento: fin, montoTotal, montoArrendamiento: montoArr, montoFinanciamiento: montoFin, ticketPromedio: ticketProm, metaDinero, avanceDinero, faltaDinero, pctProyDinero };
   }, [tableData, diasTranscurridos, diasMes]);
 
   if (loadingEjecutivos || loadingClients) {
@@ -4444,7 +4489,7 @@ function ResumenMotos() {
           <KPICardMotos icon="🏍" label="Unidades vendidas" value={totals.real} sub={`${totals.avance.toFixed(1)}% de la meta`} color={COLORS.primary} />
           <KPICardMotos icon="📋" label="Arrendamiento" value={totals.arrendamiento} sub="unidades" color={COLORS.yellow} />
           <KPICardMotos icon="💳" label="Crédito motos" value={totals.financiamiento} sub="unidades" color={COLORS.purple} />
-          <KPICardMotos icon="📈" label="Proyección" value={`${Math.round(totals.proyeccion)} uds`} sub={totals.proyeccion >= totals.meta ? "¡Superaría la meta!" : "Por debajo de meta"} color={totals.proyeccion >= totals.meta ? COLORS.green : COLORS.yellow} />
+          <KPICardMotos icon="📈" label="Proyección uds" value={`${Math.round(totals.proyeccion)} uds`} sub={totals.meta > 0 ? `${((totals.proyeccion / totals.meta) * 100).toFixed(1)}% del presupuesto` : "Sin meta"} color={totals.meta > 0 ? ((totals.proyeccion / totals.meta) * 100 >= 100 ? COLORS.green : (totals.proyeccion / totals.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.yellow} />
         </div>
         {/* KPIs de dinero */}
         <div style={{ display: "flex", gap: 14, marginBottom: 18, flexWrap: "wrap" }}>
@@ -4453,6 +4498,7 @@ function ResumenMotos() {
           <KPICardMotos icon="📋" label="Ingresos arrendamiento" value={formatMoney(Math.round(totals.montoArrendamiento))} sub={`${totals.arrendamiento} uds`} color={COLORS.yellow} />
           <KPICardMotos icon="💳" label="Ingresos crédito motos" value={formatMoney(Math.round(totals.montoFinanciamiento))} sub={`${totals.financiamiento} uds`} color={COLORS.purple} />
           <KPICardMotos icon="💵" label="Ticket promedio" value={formatMoney(Math.round(totals.ticketPromedio))} sub="por unidad" color={COLORS.blue} />
+          <KPICardMotos icon="📈" label="Proyección dinero" value={formatMoney(Math.round(totals.proyeccionDinero))} sub={totals.metaDinero > 0 ? `${totals.pctProyDinero.toFixed(1)}% del presupuesto` : "Sin meta dinero"} color={totals.metaDinero > 0 ? (totals.pctProyDinero >= 100 ? COLORS.green : totals.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red) : COLORS.yellow} />
           {totals.metaDinero > 0 && (
             <KPICardMotos icon="🔻" label="Falta por vender ($)" value={totals.faltaDinero === 0 ? "¡Meta alcanzada!" : formatMoney(Math.round(totals.faltaDinero))} color={totals.faltaDinero === 0 ? COLORS.green : COLORS.red} />
           )}
@@ -4466,7 +4512,7 @@ function ResumenMotos() {
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1050 }}>
             <thead>
               <tr style={{ background: COLORS.dark }}>
-                {["Ejecutivo", "Meta (uds)", "Real (uds)", "Arrend.", "Crédito", "Monto vendido", "Ticket prom.", "Meta ($)", "% Avance", "Progreso", "Proyección", "Falta"].map((h) => (
+                {["Ejecutivo", "Meta (uds)", "Real (uds)", "Arrend.", "Crédito", "Monto vendido", "Ticket prom.", "Meta ($)", "% Avance", "Progreso", "Proy. (uds)", "Proy. ($)", "Falta"].map((h) => (
                   <th key={h} style={{
                     padding: "12px 14px", fontSize: 11, fontWeight: 700, color: "#fff",
                     textAlign: "left", textTransform: "uppercase", letterSpacing: 0.5,
@@ -4540,9 +4586,24 @@ function ResumenMotos() {
                       <UnitDots real={ej.real} meta={ej.meta} />
                     </td>
                     <td style={{ padding: "14px", textAlign: "center" }}>
-                      <span style={{ fontSize: 15, fontWeight: 700, color: ej.proyeccion >= ej.meta ? COLORS.green : COLORS.yellow }}>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.yellow }}>
                         {Math.round(ej.proyeccion)}
                       </span>
+                      {ej.meta > 0 && (
+                        <p style={{ fontSize: 10, fontWeight: 700, margin: "2px 0 0", color: (ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red }}>
+                          {((ej.proyeccion / ej.meta) * 100).toFixed(0)}%
+                        </p>
+                      )}
+                    </td>
+                    <td style={{ padding: "14px", textAlign: "right" }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: ej.metaDinero > 0 ? (ej.pctProyDinero >= 100 ? COLORS.green : ej.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red) : COLORS.primary }}>
+                        {formatMoney(Math.round(ej.proyeccionDinero))}
+                      </span>
+                      {ej.metaDinero > 0 && (
+                        <p style={{ fontSize: 10, fontWeight: 700, margin: "2px 0 0", color: ej.pctProyDinero >= 100 ? COLORS.green : ej.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red }}>
+                          {ej.pctProyDinero.toFixed(0)}%
+                        </p>
+                      )}
                     </td>
                     <td style={{ padding: "14px", textAlign: "center" }}>
                       <span style={{ fontSize: 15, fontWeight: 700, color: ej.falta === 0 ? COLORS.green : COLORS.red }}>
@@ -4586,7 +4647,20 @@ function ResumenMotos() {
                   <ProgressBar pct={totals.avance} color={COLORS.primary} />
                 </td>
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 700, fontSize: 16 }}>
-                  <span style={{ color: totals.proyeccion >= totals.meta ? COLORS.green : COLORS.yellow }}>{Math.round(totals.proyeccion)}</span>
+                  <span style={{ color: totals.meta > 0 ? ((totals.proyeccion / totals.meta) * 100 >= 100 ? COLORS.green : (totals.proyeccion / totals.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.yellow }}>{Math.round(totals.proyeccion)}</span>
+                  {totals.meta > 0 && (
+                    <p style={{ fontSize: 10, fontWeight: 700, margin: "2px 0 0", color: (totals.proyeccion / totals.meta) * 100 >= 100 ? "#34D399" : (totals.proyeccion / totals.meta) * 100 >= 70 ? "#FCD34D" : "#FCA5A5" }}>
+                      {((totals.proyeccion / totals.meta) * 100).toFixed(0)}%
+                    </p>
+                  )}
+                </td>
+                <td style={{ padding: "14px", textAlign: "right", fontWeight: 700, fontSize: 14 }}>
+                  <span style={{ color: totals.metaDinero > 0 ? (totals.pctProyDinero >= 100 ? COLORS.green : totals.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red) : COLORS.primary }}>{formatMoney(Math.round(totals.proyeccionDinero))}</span>
+                  {totals.metaDinero > 0 && (
+                    <p style={{ fontSize: 10, fontWeight: 700, margin: "2px 0 0", color: totals.pctProyDinero >= 100 ? "#34D399" : totals.pctProyDinero >= 70 ? "#FCD34D" : "#FCA5A5" }}>
+                      {totals.pctProyDinero.toFixed(0)}%
+                    </p>
+                  )}
                 </td>
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 700, fontSize: 16 }}>
                   <span style={{ color: totals.falta === 0 ? COLORS.green : "#FF8A8A" }}>{totals.falta === 0 ? "✓ Meta" : totals.falta}</span>
@@ -4645,6 +4719,38 @@ function ResumenMotos() {
                   <p style={{ fontSize: 10, color: COLORS.textLight, margin: "2px 0 0" }}>
                     Ticket promedio: {formatMoney(Math.round(ej.ticketPromedio))}
                   </p>
+                </div>
+
+                {/* Proyecciones */}
+                <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+                  <div style={{
+                    flex: 1, padding: "8px 10px", borderRadius: 8, textAlign: "center",
+                    background: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.greenBg : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellowBg : COLORS.redBg) : "#F1F5F9",
+                  }}>
+                    <p style={{ fontSize: 9, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proy. uds</p>
+                    <p style={{ fontSize: 16, fontWeight: 800, margin: "2px 0 0", color: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
+                      {Math.round(ej.proyeccion)} uds
+                    </p>
+                    {ej.meta > 0 && (
+                      <p style={{ fontSize: 10, fontWeight: 700, margin: "2px 0 0", color: (ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red }}>
+                        {((ej.proyeccion / ej.meta) * 100).toFixed(0)}% del presupuesto
+                      </p>
+                    )}
+                  </div>
+                  <div style={{
+                    flex: 1, padding: "8px 10px", borderRadius: 8, textAlign: "center",
+                    background: ej.metaDinero > 0 ? (ej.pctProyDinero >= 100 ? COLORS.greenBg : ej.pctProyDinero >= 70 ? COLORS.yellowBg : COLORS.redBg) : "#F1F5F9",
+                  }}>
+                    <p style={{ fontSize: 9, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proy. dinero</p>
+                    <p style={{ fontSize: 16, fontWeight: 800, margin: "2px 0 0", color: ej.metaDinero > 0 ? (ej.pctProyDinero >= 100 ? COLORS.green : ej.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
+                      {formatMoney(Math.round(ej.proyeccionDinero))}
+                    </p>
+                    {ej.metaDinero > 0 && (
+                      <p style={{ fontSize: 10, fontWeight: 700, margin: "2px 0 0", color: ej.pctProyDinero >= 100 ? COLORS.green : ej.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red }}>
+                        {ej.pctProyDinero.toFixed(0)}% del presupuesto
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
