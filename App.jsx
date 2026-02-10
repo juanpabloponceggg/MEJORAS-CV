@@ -2146,6 +2146,60 @@ function TablaClientes({ perfil }) {
       );
     }
 
+    // Sucursal editable con dropdown (motos = SUCURSALES_MOTOS, nómina = SUCURSALES)
+    if (field === "sucursal") {
+      const isMotos = client.producto !== "Crédito de nómina";
+      const opciones = isMotos ? SUCURSALES_MOTOS : SUCURSALES;
+      return (
+        <div onClick={() => setEditingCell(cellKey)} style={{ cursor: "pointer", fontSize: 12 }}>
+          {isEditing ? (
+            <select
+              autoFocus
+              value={client[field] || ""}
+              onChange={(e) => handleUpdateClient(client.id, field, e.target.value)}
+              onBlur={() => setEditingCell(null)}
+              style={{ padding: "4px 6px", fontSize: 12, borderRadius: 6, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit" }}
+            >
+              <option value="">— Sin sucursal —</option>
+              {opciones.map((s) => (<option key={s} value={s}>{s}</option>))}
+            </select>
+          ) : (
+            <span style={{ color: client[field] ? COLORS.text : COLORS.textLight }}>{client[field] || "—"}</span>
+          )}
+        </div>
+      );
+    }
+
+    // Convenio editable con dropdown (todos los públicos + privados)
+    if (field === "convenio") {
+      const todosConvenios = [...CONVENIOS_PUBLICOS, ...CONVENIOS_PRIVADOS];
+      return (
+        <div onClick={() => setEditingCell(cellKey)} style={{ cursor: "pointer", fontSize: 12 }}>
+          {isEditing ? (
+            <select
+              autoFocus
+              value={client[field] || ""}
+              onChange={(e) => handleUpdateClient(client.id, field, e.target.value)}
+              onBlur={() => setEditingCell(null)}
+              style={{ padding: "4px 6px", fontSize: 11, borderRadius: 6, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit", maxWidth: 220 }}
+            >
+              <option value="">— Sin convenio —</option>
+              <optgroup label="Públicos">
+                {CONVENIOS_PUBLICOS.map((c) => (<option key={c} value={c}>{c.length > 50 ? c.substring(0, 50) + "..." : c}</option>))}
+              </optgroup>
+              <optgroup label="Privados">
+                {CONVENIOS_PRIVADOS.map((c) => (<option key={c} value={c}>{c.length > 50 ? c.substring(0, 50) + "..." : c}</option>))}
+              </optgroup>
+            </select>
+          ) : (
+            <span title={client[field] || ""} style={{ cursor: client[field] ? "help" : "default", color: client[field] ? COLORS.text : COLORS.textLight }}>
+              {client[field] ? (client[field].length > 25 ? client[field].substring(0, 25) + "..." : client[field]) : "—"}
+            </span>
+          )}
+        </div>
+      );
+    }
+
     const displayValue = field === "monto" ? formatMoney(client[field]) : client[field] || "—";
 
     return (
@@ -2497,10 +2551,8 @@ function TablaClientes({ perfil }) {
                     <td style={{ padding: "10px 14px", fontSize: 12, maxWidth: 120 }}>
                       <EditableCell client={client} field="sucursal" />
                     </td>
-                    <td style={{ padding: "10px 14px", fontSize: 12, maxWidth: 180 }}>
-                      <span title={client.convenio || ""} style={{ cursor: client.convenio ? "help" : "default", color: client.convenio ? COLORS.text : COLORS.textLight }}>
-                        {client.convenio ? (client.convenio.length > 25 ? client.convenio.substring(0, 25) + "..." : client.convenio) : "—"}
-                      </span>
+                    <td style={{ padding: "10px 14px", fontSize: 12, maxWidth: 220 }}>
+                      <EditableCell client={client} field="convenio" />
                     </td>
                     <td style={{ padding: "10px 14px" }}>
                       <EditableCell client={client} field="fecha_inicio" type="date" />
@@ -5954,6 +6006,7 @@ function RejectModal({ client, onConfirm, onClose }) {
 function MoveModal({ client, onMove, onClose }) {
   const currentIdx = getStageIndex(client.estatus);
   const nextStage = currentIdx < STAGES_PORTAL.length - 1 ? STAGES_PORTAL[currentIdx + 1] : null;
+  const prevStage = currentIdx > 0 ? STAGES_PORTAL[currentIdx - 1] : null;
 
   return (
     <div style={{
@@ -5972,21 +6025,22 @@ function MoveModal({ client, onMove, onClose }) {
           <strong>{client.nombre_cliente}</strong>
         </p>
 
-        {/* Pipeline visual */}
+        {/* Pipeline visual — clic en cualquier etapa (adelante o atrás) */}
         <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 24, flexWrap: "wrap" }}>
           {STAGES_PORTAL.map((stage, idx) => {
             const isCurrent = stage.key === client.estatus;
             const isPast = idx < currentIdx;
+            const isClickable = idx !== currentIdx;
             return (
               <div key={stage.key} style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 <div
-                  onClick={() => { if (idx > currentIdx) onMove(client.id, stage.key); }}
+                  onClick={() => { if (isClickable) onMove(client.id, stage.key); }}
                   style={{
                     padding: "8px 12px", borderRadius: 10,
                     background: isCurrent ? stage.color : isPast ? `${stage.color}20` : "#F3F4F6",
                     color: isCurrent ? "#fff" : isPast ? stage.color : COLORS.textLight,
-                    fontSize: 11, fontWeight: 700, cursor: idx > currentIdx ? "pointer" : "default",
-                    border: idx > currentIdx ? `2px dashed ${stage.color}60` : "2px solid transparent",
+                    fontSize: 11, fontWeight: 700, cursor: isClickable ? "pointer" : "default",
+                    border: isClickable ? `2px dashed ${stage.color}60` : "2px solid transparent",
                     transition: "all 0.2s",
                     textAlign: "center",
                     opacity: isPast ? 0.6 : 1,
@@ -6004,20 +6058,34 @@ function MoveModal({ client, onMove, onClose }) {
           })}
         </div>
 
-        {nextStage && (
-          <button
-            onClick={() => onMove(client.id, nextStage.key)}
-            style={{
-              width: "100%", padding: "14px", fontSize: 15, fontWeight: 700,
-              color: "#fff", background: nextStage.color, border: "none",
-              borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
-              boxShadow: `0 4px 14px ${nextStage.color}40`,
-              marginBottom: 10,
-            }}
-          >
-            {nextStage.icon} Avanzar a "{nextStage.label}"
-          </button>
-        )}
+        {/* Botones de avanzar y regresar */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+          {prevStage && (
+            <button
+              onClick={() => onMove(client.id, prevStage.key)}
+              style={{
+                flex: 1, padding: "14px", fontSize: 14, fontWeight: 700,
+                color: COLORS.orange, background: COLORS.orangeBg, border: `1.5px solid ${COLORS.orange}40`,
+                borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+              }}
+            >
+              ← Regresar a "{prevStage.label}"
+            </button>
+          )}
+          {nextStage && (
+            <button
+              onClick={() => onMove(client.id, nextStage.key)}
+              style={{
+                flex: 1, padding: "14px", fontSize: 14, fontWeight: 700,
+                color: "#fff", background: nextStage.color, border: "none",
+                borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+                boxShadow: `0 4px 14px ${nextStage.color}40`,
+              }}
+            >
+              Avanzar a "{nextStage.label}" →
+            </button>
+          )}
+        </div>
 
         <button onClick={onClose} style={{
           width: "100%", padding: "12px", fontSize: 14, fontWeight: 600,
@@ -6143,7 +6211,79 @@ function AddModal({ onAdd, onClose, ejecutivoTipo }) {
   );
 }
 
-function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick }) {
+function CommentModal({ client, onSave, onClose }) {
+  const [comment, setComment] = useState(client.actualizacion || "");
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!comment.trim()) { alert("Escribe un comentario"); return; }
+    setSaving(true);
+    await onSave(client.id, comment.trim());
+    setSaving(false);
+  };
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      zIndex: 1000, padding: 16,
+    }}>
+      <div style={{
+        background: "#fff", borderRadius: 16, padding: "28px 24px",
+        maxWidth: 480, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+      }}>
+        <h3 style={{ fontSize: 18, fontWeight: 700, color: COLORS.dark, margin: "0 0 4px" }}>
+          💬 Comentario
+        </h3>
+        <p style={{ fontSize: 13, color: COLORS.textLight, margin: "0 0 16px" }}>
+          <strong>{client.nombre_cliente}</strong> — {client.producto}
+        </p>
+
+        <textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Escribe tu comentario o nota sobre este cliente..."
+          rows={4}
+          style={{
+            width: "100%", padding: "12px 14px", fontSize: 14,
+            border: `1.5px solid ${COLORS.border}`, borderRadius: 10,
+            fontFamily: "inherit", outline: "none", resize: "vertical",
+            boxSizing: "border-box", lineHeight: 1.5,
+          }}
+          onFocus={(e) => { e.target.style.borderColor = COLORS.primary; }}
+          onBlur={(e) => { e.target.style.borderColor = COLORS.border; }}
+        />
+        <p style={{ fontSize: 11, color: COLORS.textLight, margin: "6px 0 16px" }}>
+          Este comentario quedará guardado como la última actualización del cliente.
+        </p>
+
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={onClose} style={{
+            flex: 1, padding: "12px", fontSize: 14, fontWeight: 600,
+            color: COLORS.textLight, background: "#F3F4F6", border: "none",
+            borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+          }}>
+            Cancelar
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            style={{
+              flex: 2, padding: "12px", fontSize: 15, fontWeight: 700,
+              color: "#fff", background: saving ? COLORS.textLight : COLORS.primary, border: "none",
+              borderRadius: 10, cursor: saving ? "default" : "pointer", fontFamily: "inherit",
+              boxShadow: `0 4px 14px ${COLORS.primary}40`,
+            }}
+          >
+            {saving ? "Guardando..." : "💾 Guardar comentario"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick, onCommentClick }) {
   const stageConfig = STAGES_PORTAL.find((s) => s.key === client.estatus) || REJECTED_STATUS_PORTAL;
   const isRejected = client.estatus === "Rechazado";
   const isDispersed = client.estatus === "Dispersión";
@@ -6245,7 +6385,7 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick }) {
 
       {/* Actions */}
       {!isRejected && !isDispersed && (
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
           <button
             onClick={() => onMoveClick(client)}
             style={{
@@ -6254,7 +6394,7 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick }) {
               borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
             }}
           >
-            Avanzar etapa →
+            Mover etapa ↔
           </button>
           <button
             onClick={() => onRejectClick(client)}
@@ -6270,13 +6410,26 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick }) {
       )}
       {isDispersed && (
         <div style={{
-          background: COLORS.greenBg, borderRadius: 8, padding: "10px",
+          background: COLORS.greenBg, borderRadius: 8, padding: "10px", marginBottom: 8,
           textAlign: "center", border: `1px solid ${COLORS.green}30`,
         }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.green }}>
             ✓ Crédito dispersado — Venta cerrada
           </span>
         </div>
+      )}
+      {/* Botón de comentario — siempre visible */}
+      {onCommentClick && (
+        <button
+          onClick={() => onCommentClick(client)}
+          style={{
+            width: "100%", padding: "9px", fontSize: 12, fontWeight: 600,
+            color: COLORS.blue, background: COLORS.blueBg, border: `1px solid ${COLORS.blue}30`,
+            borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+          }}
+        >
+          💬 Agregar / editar comentario
+        </button>
       )}
     </div>
   );
@@ -6306,7 +6459,7 @@ function PortalEjecutivo({ perfil }) {
     fetchTipo();
   }, [ejecutivoNombre, mes, anio]);
 
-  const { clients, loading, error, addClient, updateEstatus, deleteClient, refetch } = useClients({
+  const { clients, loading, error, addClient, updateClient, updateEstatus, deleteClient, refetch } = useClients({
     mes, anio,
     ejecutivoNombre,
     isAdmin: false,
@@ -6314,6 +6467,7 @@ function PortalEjecutivo({ perfil }) {
   const [filterEstatus, setFilterEstatus] = useState("todos");
   const [moveClient, setMoveClient] = useState(null);
   const [rejectClient, setRejectClient] = useState(null);
+  const [commentClient, setCommentClient] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [deleteConfirmPortal, setDeleteConfirmPortal] = useState(null);
 
@@ -6369,6 +6523,14 @@ function PortalEjecutivo({ perfil }) {
     }
     await addClient(clientData);
     setShowAdd(false);
+  };
+
+  const handleComment = async (clientId, comment) => {
+    const result = await updateClient(clientId, "actualizacion", comment);
+    if (result.success) {
+      await refetch();
+      setCommentClient(null);
+    }
   };
 
   const filterBtn = (key, label, count) => (
@@ -6523,6 +6685,7 @@ function PortalEjecutivo({ perfil }) {
               onMoveClick={setMoveClient}
               onRejectClick={setRejectClient}
               onDeleteClick={setDeleteConfirmPortal}
+              onCommentClick={setCommentClient}
             />
           ))}
         </div>
@@ -6541,6 +6704,7 @@ function PortalEjecutivo({ perfil }) {
       {/* Modals */}
       {moveClient && <MoveModal client={moveClient} onMove={handleMove} onClose={() => setMoveClient(null)} />}
       {rejectClient && <RejectModal client={rejectClient} onConfirm={handleReject} onClose={() => setRejectClient(null)} />}
+      {commentClient && <CommentModal client={commentClient} onSave={handleComment} onClose={() => setCommentClient(null)} />}
       {showAdd && <AddModal onAdd={handleAdd} onClose={() => setShowAdd(false)} ejecutivoTipo={ejecutivoTipo} />}
 
       {/* Confirmar eliminar cliente (portal ejecutivo) */}
