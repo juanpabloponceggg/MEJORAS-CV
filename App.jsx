@@ -1109,8 +1109,8 @@ function KPICard({ label, value, sub, color, icon }) {
           }}>{icon}</div>
         )}
       </div>
-      <p style={{ fontSize: 28, fontWeight: 800, color: color || COLORS.dark, margin: 0, letterSpacing: "-0.5px", lineHeight: 1 }}>{value}</p>
-      {sub && <p style={{ fontSize: 12, color: COLORS.textLight, margin: "8px 0 0", fontWeight: 600 }}>{sub}</p>}
+      <p style={{ fontSize: 20, fontWeight: 800, color: color || COLORS.dark, margin: 0, letterSpacing: "-0.3px", lineHeight: 1.2 }}>{value}</p>
+      {sub && <p style={{ fontSize: 11, color: COLORS.textLight, margin: "6px 0 0", fontWeight: 600 }}>{sub}</p>}
     </div>
   );
 }
@@ -3270,7 +3270,7 @@ function GestionUsuarios() {
                   {stat.label}
                 </p>
               </div>
-              <p style={{ fontSize: 26, fontWeight: 800, color: stat.color, margin: 0 }}>{stat.value}</p>
+              <p style={{ fontSize: 18, fontWeight: 800, color: stat.color, margin: 0 }}>{stat.value}</p>
             </div>
           ))}
         </div>
@@ -3644,16 +3644,16 @@ function GestionUsuarios() {
 function KPICardNomina({ label, value, sub, color, icon }) {
   return (
     <div style={{
-      background: "#fff", borderRadius: 16, padding: 20,
+      background: "#fff", borderRadius: 16, padding: 18,
       boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
       flex: "1 1 200px", minWidth: 180,
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-        <span style={{ fontSize: 18 }}>{icon}</span>
-        <p style={{ fontSize: 11, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</p>
+        <span style={{ fontSize: 16 }}>{icon}</span>
+        <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</p>
       </div>
-      <p style={{ fontSize: 28, fontWeight: 800, color: color || COLORS.dark, margin: 0, letterSpacing: "-0.5px" }}>{value}</p>
-      {sub && <p style={{ fontSize: 11, color: COLORS.textLight, margin: "4px 0 0" }}>{sub}</p>}
+      <p style={{ fontSize: 20, fontWeight: 800, color: color || COLORS.dark, margin: 0, letterSpacing: "-0.3px" }}>{value}</p>
+      {sub && <p style={{ fontSize: 10, color: COLORS.textLight, margin: "4px 0 0" }}>{sub}</p>}
     </div>
   );
 }
@@ -3776,19 +3776,19 @@ function ResumenNomina() {
           <div style={{ display: "flex", gap: 20, marginLeft: "auto", flexWrap: "wrap" }}>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>Días del mes</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: COLORS.dark, margin: 0 }}>{diasMes}</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.dark, margin: 0 }}>{diasMes}</p>
             </div>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>Transcurridos</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{diasTranscurridos}</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{diasTranscurridos}</p>
             </div>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>Restantes</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: diasRestantes <= 5 ? COLORS.red : COLORS.yellow, margin: 0 }}>{diasRestantes}</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: diasRestantes <= 5 ? COLORS.red : COLORS.yellow, margin: 0 }}>{diasRestantes}</p>
             </div>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>% Mes</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: COLORS.dark, margin: 0 }}>{pctMesTranscurrido}%</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.dark, margin: 0 }}>{pctMesTranscurrido}%</p>
             </div>
           </div>
         </div>
@@ -4362,16 +4362,16 @@ function ResumenNomina() {
 function KPICardMotos({ label, value, sub, color, icon }) {
   return (
     <div style={{
-      background: "#fff", borderRadius: 16, padding: 20,
+      background: "#fff", borderRadius: 16, padding: 18,
       boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
       flex: "1 1 180px", minWidth: 160,
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-        <span style={{ fontSize: 18 }}>{icon}</span>
-        <p style={{ fontSize: 11, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</p>
+        <span style={{ fontSize: 16 }}>{icon}</span>
+        <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</p>
       </div>
-      <p style={{ fontSize: 28, fontWeight: 800, color: color || COLORS.dark, margin: 0, letterSpacing: "-0.5px" }}>{value}</p>
-      {sub && <p style={{ fontSize: 11, color: COLORS.textLight, margin: "4px 0 0" }}>{sub}</p>}
+      <p style={{ fontSize: 20, fontWeight: 800, color: color || COLORS.dark, margin: 0, letterSpacing: "-0.3px" }}>{value}</p>
+      {sub && <p style={{ fontSize: 10, color: COLORS.textLight, margin: "4px 0 0" }}>{sub}</p>}
     </div>
   );
 }
@@ -4541,19 +4541,19 @@ function ResumenMotos() {
           <div style={{ display: "flex", gap: 20, marginLeft: "auto", flexWrap: "wrap" }}>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>Días del mes</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: COLORS.dark, margin: 0 }}>{diasMes}</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.dark, margin: 0 }}>{diasMes}</p>
             </div>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>Transcurridos</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{diasTranscurridos}</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{diasTranscurridos}</p>
             </div>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>Restantes</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: diasRestantes <= 5 ? COLORS.red : COLORS.yellow, margin: 0 }}>{diasRestantes}</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: diasRestantes <= 5 ? COLORS.red : COLORS.yellow, margin: 0 }}>{diasRestantes}</p>
             </div>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>% Mes</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: COLORS.dark, margin: 0 }}>{pctMesTranscurrido}%</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.dark, margin: 0 }}>{pctMesTranscurrido}%</p>
             </div>
           </div>
         </div>
@@ -4625,7 +4625,7 @@ function ResumenMotos() {
                     <td style={{ padding: "14px", textAlign: "center" }}>
                       <span style={{
                         display: "inline-block", padding: "4px 14px", borderRadius: 10,
-                        fontSize: 18, fontWeight: 800, color: COLORS.primary, background: COLORS.primaryLight,
+                        fontSize: 15, fontWeight: 800, color: COLORS.primary, background: COLORS.primaryLight,
                       }}>
                         {ej.real}
                       </span>
@@ -4698,7 +4698,7 @@ function ResumenMotos() {
                 <td style={{ padding: "14px" }}></td>
                 <td style={{ padding: "14px", fontWeight: 800, fontSize: 14, color: "#fff" }}>TOTAL EQUIPO</td>
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 700, fontSize: 16, color: "#fff" }}>{totals.meta}</td>
-                <td style={{ padding: "14px", textAlign: "center", fontWeight: 800, fontSize: 18, color: COLORS.primary }}>{totals.real}</td>
+                <td style={{ padding: "14px", textAlign: "center", fontWeight: 800, fontSize: 15, color: COLORS.primary }}>{totals.real}</td>
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 700, color: COLORS.yellow }}>{totals.arrendamiento}</td>
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 700, color: COLORS.purple }}>{totals.financiamiento}</td>
                 <td style={{ padding: "14px", textAlign: "right", fontWeight: 800, fontSize: 14, color: COLORS.primary }}>{formatMoney(Math.round(totals.montoTotal))}</td>
@@ -4792,7 +4792,7 @@ function ResumenMotos() {
                   borderRadius: 10, padding: "14px 16px", marginBottom: 14, textAlign: "center",
                 }}>
                   <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>Monto vendido</p>
-                  <p style={{ fontSize: 18, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{formatMoney(Math.round(ej.montoTotal))}</p>
+                  <p style={{ fontSize: 15, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{formatMoney(Math.round(ej.montoTotal))}</p>
                   {ej.metaDinero > 0 && (
                     <p style={{ fontSize: 10, color: ej.avanceDinero >= 80 ? COLORS.green : ej.avanceDinero >= 50 ? COLORS.yellow : COLORS.red, margin: "2px 0 0", fontWeight: 700 }}>
                       {ej.avanceDinero.toFixed(0)}% de meta ({formatMoney(Math.round(ej.metaDinero))})
@@ -4810,7 +4810,7 @@ function ResumenMotos() {
                     background: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.greenBg : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellowBg : COLORS.redBg) : "#F1F5F9",
                   }}>
                     <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proy. uds</p>
-                    <p style={{ fontSize: 18, fontWeight: 800, margin: "2px 0 0", color: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
+                    <p style={{ fontSize: 15, fontWeight: 800, margin: "2px 0 0", color: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
                       {Math.round(ej.proyeccion)} uds
                     </p>
                     {ej.meta > 0 && (
@@ -4824,7 +4824,7 @@ function ResumenMotos() {
                     background: ej.metaDinero > 0 ? (ej.pctProyDinero >= 100 ? COLORS.greenBg : ej.pctProyDinero >= 70 ? COLORS.yellowBg : COLORS.redBg) : "#F1F5F9",
                   }}>
                     <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proy. dinero</p>
-                    <p style={{ fontSize: 18, fontWeight: 800, margin: "2px 0 0", color: ej.metaDinero > 0 ? (ej.pctProyDinero >= 100 ? COLORS.green : ej.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
+                    <p style={{ fontSize: 15, fontWeight: 800, margin: "2px 0 0", color: ej.metaDinero > 0 ? (ej.pctProyDinero >= 100 ? COLORS.green : ej.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
                       {formatMoney(Math.round(ej.proyeccionDinero))}
                     </p>
                     {ej.metaDinero > 0 && (
@@ -4838,11 +4838,11 @@ function ResumenMotos() {
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <div>
                     <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>Real</p>
-                    <p style={{ fontSize: 22, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{ej.real}</p>
+                    <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{ej.real}</p>
                   </div>
                   <div style={{ textAlign: "center" }}>
                     <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>Meta</p>
-                    <p style={{ fontSize: 22, fontWeight: 700, color: COLORS.text, margin: 0 }}>{ej.meta}</p>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: COLORS.text, margin: 0 }}>{ej.meta}</p>
                   </div>
                   <div style={{ textAlign: "center" }}>
                     <p style={{ fontSize: 10, color: COLORS.yellow, margin: 0, fontWeight: 600 }}>Arrend.</p>
@@ -4856,7 +4856,7 @@ function ResumenMotos() {
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>Falta</p>
-                    <p style={{ fontSize: 22, fontWeight: 700, color: ej.falta === 0 ? COLORS.green : COLORS.red, margin: 0 }}>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: ej.falta === 0 ? COLORS.green : COLORS.red, margin: 0 }}>
                       {ej.falta === 0 ? "✓" : ej.falta}
                     </p>
                   </div>
@@ -5130,15 +5130,15 @@ function GestionConvenios() {
       {/* Stats */}
       <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
         <div style={{ background: "#fff", borderRadius: 12, padding: "14px 20px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center", minWidth: 100, flex: 1 }}>
-          <p style={{ fontSize: 28, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{convenios.length}</p>
+          <p style={{ fontSize: 18, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{convenios.length}</p>
           <p style={{ fontSize: 12, color: COLORS.textLight, margin: "2px 0 0" }}>Total</p>
         </div>
         <div style={{ background: "#fff", borderRadius: 12, padding: "14px 20px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center", minWidth: 100, flex: 1 }}>
-          <p style={{ fontSize: 28, fontWeight: 800, color: COLORS.blue, margin: 0 }}>{publicos}</p>
+          <p style={{ fontSize: 18, fontWeight: 800, color: COLORS.blue, margin: 0 }}>{publicos}</p>
           <p style={{ fontSize: 12, color: COLORS.textLight, margin: "2px 0 0" }}>Públicos</p>
         </div>
         <div style={{ background: "#fff", borderRadius: 12, padding: "14px 20px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center", minWidth: 100, flex: 1 }}>
-          <p style={{ fontSize: 28, fontWeight: 800, color: COLORS.purple, margin: 0 }}>{privados}</p>
+          <p style={{ fontSize: 18, fontWeight: 800, color: COLORS.purple, margin: 0 }}>{privados}</p>
           <p style={{ fontSize: 12, color: COLORS.textLight, margin: "2px 0 0" }}>Privados</p>
         </div>
       </div>
@@ -5669,18 +5669,18 @@ function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, typ
           <div style={{ display: "flex", gap: 16 }}>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: "#ffffff70", margin: 0, textTransform: "uppercase" }}>Ejecutivos activos</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: accentColor, margin: 0 }}>{activos}</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: accentColor, margin: 0 }}>{activos}</p>
             </div>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 10, color: "#ffffff70", margin: 0, textTransform: "uppercase" }}>Meta total</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: "#fff", margin: 0 }}>
+              <p style={{ fontSize: 16, fontWeight: 800, color: "#fff", margin: 0 }}>
                 {isMoney ? formatMoney(totalMeta) : `${totalMeta} uds`}
               </p>
             </div>
             {showMetaDinero && (
               <div style={{ textAlign: "center" }}>
                 <p style={{ fontSize: 10, color: "#ffffff70", margin: 0, textTransform: "uppercase" }}>Meta dinero</p>
-                <p style={{ fontSize: 22, fontWeight: 800, color: COLORS.primary, margin: 0 }}>
+                <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.primary, margin: 0 }}>
                   {formatMoney(totalMetaDinero)}
                 </p>
               </div>
@@ -6695,7 +6695,7 @@ function PortalEjecutivo({ perfil }) {
                     <p style={{ fontSize: 10, color: COLORS.textLight, margin: "4px 0 0", fontWeight: 700, textTransform: "uppercase" }}>
                       {stage.label.split(" ")[0]}
                     </p>
-                    <p style={{ fontSize: 28, fontWeight: 800, color: stage.color, margin: "2px 0 0" }}>{count}</p>
+                    <p style={{ fontSize: 18, fontWeight: 800, color: stage.color, margin: "2px 0 0" }}>{count}</p>
                   </div>
                   {idx < STAGES_PORTAL.length - 1 && (
                     <span style={{ color: "#D1D5DB", fontSize: 18, display: "flex", alignItems: "center", padding: "0 2px" }}>›</span>
@@ -6919,16 +6919,22 @@ function ExportExcel() {
         if (clients.length === 0) return;
 
         const sheetName = `${MESES[mes - 1]} ${anio}`;
-        const rows = clients.map((c) => ({
-          Ejecutivo: c.ejecutivo,
-          Cliente: c.nombre_cliente,
-          Producto: c.producto,
-          Monto: c.monto,
-          "Fecha inicio": c.fecha_inicio,
-          Estatus: c.estatus,
-          "Actualización": c.actualizacion,
-          "Fecha final": c.fecha_final || "—",
-        }));
+        const rows = clients.map((c) => {
+          const ts = c.estatus === "Dispersión" || c.estatus === "Rechazado" ? null : getTimeSinceUpdate(c.estatus_updated_at);
+          return {
+            Ejecutivo: c.ejecutivo,
+            Cliente: c.nombre_cliente,
+            Producto: c.producto,
+            Monto: c.monto,
+            Sucursal: c.sucursal || "—",
+            Convenio: c.convenio || "—",
+            "Fecha inicio": c.fecha_inicio,
+            Estatus: c.estatus,
+            "Sin actualizar": ts ? ts.text : "—",
+            "Actualización": c.actualizacion || "—",
+            "Fecha final": c.fecha_final || "—",
+          };
+        });
         sheets.push({ name: sheetName, rows, count: rows.length });
 
         const ws = XLSX.utils.json_to_sheet(rows);
@@ -6943,9 +6949,12 @@ function ExportExcel() {
             Mes: `${MESES[mes - 1]} ${anio}`,
             "Total clientes": st.totalClientes,
             Dispersiones: st.dispersiones,
+            Rechazados: st.rechazados,
             "En pipeline": st.enPipeline,
             "Monto nómina dispersado": st.montoNomina,
             "Motos vendidas (uds)": st.udsMotos,
+            "Monto motos": st.montoMotos,
+            "Ingresos totales": st.ingresosTotales,
           };
         });
       sheets.push({ name: "Resumen", rows: resumenRows, count: resumenRows.length });
@@ -7048,7 +7057,7 @@ function ExportExcel() {
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>
                 Meses con datos
               </p>
-              <p style={{ fontSize: 24, fontWeight: 800, color: COLORS.primary, margin: 0 }}>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.primary, margin: 0 }}>
                 {totalYear.meses}
               </p>
             </div>
@@ -7056,7 +7065,7 @@ function ExportExcel() {
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>
                 Total clientes
               </p>
-              <p style={{ fontSize: 24, fontWeight: 800, color: COLORS.dark, margin: 0 }}>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.dark, margin: 0 }}>
                 {totalYear.clientes}
               </p>
             </div>
@@ -7064,7 +7073,7 @@ function ExportExcel() {
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>
                 Nómina dispersada
               </p>
-              <p style={{ fontSize: 24, fontWeight: 800, color: COLORS.green, margin: 0 }}>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.green, margin: 0 }}>
                 {formatMoney(totalYear.montoNomina)}
               </p>
             </div>
@@ -7072,7 +7081,7 @@ function ExportExcel() {
               <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>
                 Motos vendidas
               </p>
-              <p style={{ fontSize: 24, fontWeight: 800, color: COLORS.yellow, margin: 0 }}>
+              <p style={{ fontSize: 16, fontWeight: 800, color: COLORS.yellow, margin: 0 }}>
                 {totalYear.udsMotos} uds
               </p>
             </div>
@@ -7415,14 +7424,14 @@ function ExportExcel() {
             <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
               <thead>
                 <tr style={{ background: "#F8FAFC" }}>
-                  {["Mes", "Ejecutivo", "Cliente", "Producto", "Monto", "Estatus", "Fecha inicio"].map((h) => (
+                  {["Mes", "Ejecutivo", "Cliente", "Producto", "Monto", "Sucursal", "Convenio", "Estatus", "Fecha inicio"].map((h) => (
                     <th
                       key={h}
                       style={{
                         padding: "14px 16px",
                         fontSize: 10,
                         fontWeight: 700,
-                        color: "#fff",
+                        color: COLORS.textLight,
                         textAlign: "left",
                         textTransform: "uppercase",
                         letterSpacing: 0.5,
@@ -7496,6 +7505,12 @@ function ExportExcel() {
                           </p>
                         </td>
                         <td style={{ padding: "14px 16px" }}>
+                          <p style={{ fontSize: 11, color: COLORS.textLight, margin: 0 }}>{client.sucursal || "—"}</p>
+                        </td>
+                        <td style={{ padding: "14px 16px" }}>
+                          <p style={{ fontSize: 11, color: COLORS.textLight, margin: 0, maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{client.convenio || "—"}</p>
+                        </td>
+                        <td style={{ padding: "14px 16px" }}>
                           <span
                             style={{
                               display: "inline-block",
@@ -7540,9 +7555,9 @@ function ExportExcel() {
               Formato del archivo Excel
             </p>
             <p style={{ fontSize: 12, color: COLORS.textLight, margin: 0, lineHeight: 1.6 }}>
-              Cada hoja mensual incluye: Ejecutivo, Cliente, Producto, Monto ($), Fecha inicio, Estatus,
-              Actualización, Fecha final. La hoja de Resumen muestra totales por mes con nómina en pesos
-              y motos en unidades. Los datos incluyen TODOS los estatus, no solo dispersiones.
+              Cada hoja mensual incluye: Ejecutivo, Cliente, Producto, Monto ($), Sucursal, Convenio, Fecha inicio, Estatus,
+              Sin actualizar, Actualización, Fecha final. La hoja de Resumen muestra totales por mes con nómina y motos
+              en pesos y unidades, rechazados e ingresos totales. Los datos incluyen TODOS los estatus.
             </p>
           </div>
         </div>
