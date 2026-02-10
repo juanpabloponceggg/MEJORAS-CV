@@ -67,7 +67,10 @@ export function useClients({ mes, anio, ejecutivoId = null, ejecutivoNombre = nu
           if (payload.eventType === "INSERT") {
             const newClient = payload.new;
             if (newClient.mes_registro === mes) {
-              setClients((prev) => [newClient, ...prev]);
+              setClients((prev) => {
+                if (prev.some((c) => c.id === newClient.id)) return prev;
+                return [newClient, ...prev];
+              });
             }
           } else if (payload.eventType === "UPDATE") {
             setClients((prev) =>
@@ -91,6 +94,7 @@ export function useClients({ mes, anio, ejecutivoId = null, ejecutivoNombre = nu
       .from("clientes")
       .insert({
         ...clientData,
+        estatus: clientData.estatus || "Prospecto",
         mes_registro: mes,
         anio_registro: anio,
         fecha_inicio: clientData.fecha_inicio || new Date().toISOString().split("T")[0],
@@ -102,6 +106,13 @@ export function useClients({ mes, anio, ejecutivoId = null, ejecutivoNombre = nu
     if (err) {
       setError(err.message);
       return { success: false, error: err.message };
+    }
+    // Actualizar estado local inmediatamente con los datos del servidor
+    if (data) {
+      setClients((prev) => {
+        if (prev.some((c) => c.id === data.id)) return prev;
+        return [data, ...prev];
+      });
     }
     return { success: true, client: data };
   };
