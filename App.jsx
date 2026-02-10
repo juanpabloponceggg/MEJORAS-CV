@@ -1418,6 +1418,7 @@ function DashboardAdmin() {
     return Object.values(map).sort((a, b) => b.monto - a.monto);
   }, [dispersados]);
 
+
   // ── Datos mensuales para gráfica ──
   const monthlyData = useMemo(() => {
     const disp = allClients.filter((c) => c.estatus === "Dispersión");
@@ -1945,6 +1946,7 @@ function DashboardAdmin() {
             </div>
           )}
         </div>
+
 
         {/* ─── Footer info ─── */}
         <p style={{ textAlign: "center", fontSize: 11, color: COLORS.textLight, padding: "10px 0 20px" }}>
@@ -2596,7 +2598,7 @@ function TablaClientes({ perfil }) {
                         );
                       })()}
                     </td>
-                    <td style={{ padding: "14px 16px", fontSize: 13, maxWidth: 200, fontSize: 12, color: COLORS.textLight }}>
+                    <td style={{ padding: "14px 16px", fontSize: 12, maxWidth: 200, color: COLORS.textLight }}>
                       <EditableCell client={client} field="actualizacion" />
                     </td>
                     <td style={{ padding: "14px 16px" }}>
@@ -3690,7 +3692,7 @@ function ResumenNomina() {
       const falta = Math.max(ej.meta - real, 0);
       const ticketPromedio = clientesDisp > 0 ? real / clientesDisp : 0;
       return { ...ej, real, clientesDisp, ticketPromedio, avance, proyeccion, falta };
-    });
+    }).sort((a, b) => b.real - a.real);
   }, [nominaEjecutivos, clients, diasTranscurridos, diasMes]);
 
   const totals = useMemo(() => {
@@ -3809,9 +3811,9 @@ function ResumenNomina() {
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1000 }}>
             <thead>
               <tr style={{ background: "#F8FAFC" }}>
-                {["Ejecutivo", "Meta mensual", "Real (Dispersión)", "Clientes", "Ticket prom.", "% Avance", "Barra de progreso", "Proyección", "Falta"].map((h) => (
+                {["#", "Ejecutivo", "Meta mensual", "Real (Dispersión)", "Clientes", "Ticket prom.", "% Avance", "Progreso", "Proyección", "Falta"].map((h) => (
                   <th key={h} style={{
-                    padding: "12px 16px", fontSize: 12, fontWeight: 700, color: "#fff",
+                    padding: "12px 16px", fontSize: 11, fontWeight: 700, color: COLORS.textLight,
                     textAlign: "left", textTransform: "uppercase", letterSpacing: 0.5,
                     whiteSpace: "nowrap", borderBottom: `2px solid ${COLORS.border}`,
                   }}>{h}</th>
@@ -3821,11 +3823,15 @@ function ResumenNomina() {
             <tbody>
               {tableData.map((ej, idx) => {
                 const pc = pctColor(ej.avance);
+                const medals = ["🥇", "🥈", "🥉"];
                 return (
                   <tr key={idx} style={{
-                    background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                    background: idx === 0 ? COLORS.greenBg : idx % 2 === 0 ? "#fff" : "#F8FAFB",
                     borderBottom: `1px solid #F1F5F9`,
                   }}>
+                    <td style={{ padding: "14px 16px", textAlign: "center", fontSize: 16 }}>
+                      {idx < 3 ? medals[idx] : <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.textLight }}>{idx + 1}</span>}
+                    </td>
                     <td style={{ padding: "14px 16px" }}>
                       <p style={{ fontSize: 13, fontWeight: 600, color: COLORS.text, margin: 0 }}>
                         {ej.nombre.split(" ").slice(0, 3).join(" ")}
@@ -3882,7 +3888,8 @@ function ResumenNomina() {
                 );
               })}
 
-              <tr style={{ background: "#F8FAFC" }}>
+              <tr style={{ background: COLORS.dark }}>
+                <td style={{ padding: "14px 16px" }}></td>
                 <td style={{ padding: "14px 16px", fontWeight: 800, fontSize: 14, color: "#fff" }}>
                   TOTAL EQUIPO
                 </td>
@@ -4442,7 +4449,7 @@ function ResumenMotos() {
       const faltaDinero = Math.max(metaDinero - montoTotal, 0);
       const pctProyDinero = metaDinero > 0 ? (proyeccionDinero / metaDinero) * 100 : 0;
       return { ...ej, real, arrendamiento, financiamiento, montoTotal, montoArrendamiento, montoFinanciamiento, ticketPromedio, avance, proyeccion, proyeccionDinero, falta, metaDinero, avanceDinero, faltaDinero, pctProyDinero };
-    });
+    }).sort((a, b) => b.real - a.real);
   }, [motosEjecutivos, clients, diasTranscurridos, diasMes]);
 
   const totals = useMemo(() => {
@@ -4581,11 +4588,11 @@ function ResumenMotos() {
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1050 }}>
             <thead>
               <tr style={{ background: "#F8FAFC" }}>
-                {["Ejecutivo", "Meta (uds)", "Real (uds)", "Arrend.", "Crédito", "Monto vendido", "Ticket prom.", "Meta ($)", "% Avance", "Progreso", "Proy. (uds)", "Proy. ($)", "Falta"].map((h) => (
+                {["#", "Ejecutivo", "Meta (uds)", "Real (uds)", "Arrend.", "Crédito", "Monto vendido", "Ticket prom.", "Meta ($)", "% Avance", "Progreso", "Proy. (uds)", "Proy. ($)", "Falta"].map((h) => (
                   <th key={h} style={{
-                    padding: "12px 14px", fontSize: 11, fontWeight: 700, color: "#fff",
+                    padding: "12px 14px", fontSize: 11, fontWeight: 700, color: COLORS.textLight,
                     textAlign: "left", textTransform: "uppercase", letterSpacing: 0.5,
-                    whiteSpace: "nowrap", borderBottom: `3px solid ${COLORS.yellow}`,
+                    whiteSpace: "nowrap", borderBottom: `2px solid ${COLORS.border}`,
                   }}>{h}</th>
                 ))}
               </tr>
@@ -4593,11 +4600,15 @@ function ResumenMotos() {
             <tbody>
               {tableData.map((ej, idx) => {
                 const pc = pctColor(ej.avance);
+                const medals = ["🥇", "🥈", "🥉"];
                 return (
                   <tr key={idx} style={{
-                    background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                    background: idx === 0 ? COLORS.motoBg : idx % 2 === 0 ? "#fff" : "#F8FAFB",
                     borderBottom: `1px solid #F1F5F9`,
                   }}>
+                    <td style={{ padding: "14px", textAlign: "center", fontSize: 16 }}>
+                      {idx < 3 ? medals[idx] : <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.textLight }}>{idx + 1}</span>}
+                    </td>
                     <td style={{ padding: "14px", maxWidth: 180 }}>
                       <p style={{ fontSize: 13, fontWeight: 600, color: COLORS.text, margin: 0 }}>
                         {ej.nombre.split(" ").slice(0, 3).join(" ")}
@@ -4683,7 +4694,8 @@ function ResumenMotos() {
                 );
               })}
 
-              <tr style={{ background: "#F8FAFC" }}>
+              <tr style={{ background: COLORS.dark }}>
+                <td style={{ padding: "14px" }}></td>
                 <td style={{ padding: "14px", fontWeight: 800, fontSize: 14, color: "#fff" }}>TOTAL EQUIPO</td>
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 700, fontSize: 16, color: "#fff" }}>{totals.meta}</td>
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 800, fontSize: 18, color: COLORS.primary }}>{totals.real}</td>
