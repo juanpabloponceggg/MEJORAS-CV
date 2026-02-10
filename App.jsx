@@ -4,7 +4,7 @@ import { useClients } from "./useClients";
 import { useExecutives } from "./useExecutives";
 import { supabase } from "./supabase";
 import * as XLSX from "xlsx";
-import { COLORS, MESES, formatMoney, STATUS_CONFIG, PRODUCTOS, ESTATUS_LIST, getDaysInMonth, pctColor, getTimeSinceUpdate, SUCURSALES, CONVENIOS_PUBLICOS, CONVENIOS_PRIVADOS } from "./constants";
+import { COLORS, MESES, formatMoney, STATUS_CONFIG, PRODUCTOS, ESTATUS_LIST, getDaysInMonth, pctColor, getTimeSinceUpdate, SUCURSALES, SUCURSALES_MOTOS, CONVENIOS_PUBLICOS, CONVENIOS_PRIVADOS } from "./constants";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // HELPER: Retry automático para queries de Supabase (cold-start protection)
@@ -877,11 +877,11 @@ function AddClientModal({ onAdd, onClose, ejecutivos = [] }) {
   const update = (key, val) => {
     setForm((p) => {
       const next = { ...p, [key]: val };
-      // Si cambian de producto y ya no es nómina, limpiar campos de nómina
-      if (key === "producto" && val !== "Crédito de nómina") {
-        next.sucursal = "";
+      // Si cambian de producto, limpiar campos de nómina (tipo_convenio, convenio)
+      if (key === "producto") {
         next.tipo_convenio = "";
         next.convenio = "";
+        next.sucursal = "";
       }
       // Si cambian tipo_convenio, limpiar convenio
       if (key === "tipo_convenio") {
@@ -892,6 +892,7 @@ function AddClientModal({ onAdd, onClose, ejecutivos = [] }) {
   };
 
   const isProductoNomina = form.producto === "Crédito de nómina";
+  const isProductoMotos = form.producto === "Arrendamiento de motos" || form.producto === "Crédito de motos";
 
   const handleSubmit = () => {
     if (!form.ejecutivo || !form.nombre_cliente || !form.producto) {
@@ -900,6 +901,10 @@ function AddClientModal({ onAdd, onClose, ejecutivos = [] }) {
     }
     if (isProductoNomina && (!form.sucursal || !form.convenio)) {
       alert("Para Crédito de nómina, Sucursal y Convenio son obligatorios");
+      return;
+    }
+    if (isProductoMotos && !form.sucursal) {
+      alert("Selecciona una sucursal para el cliente de motos");
       return;
     }
     onAdd({ ...form, monto: Number(form.monto) || 0 });
@@ -978,6 +983,28 @@ function AddClientModal({ onAdd, onClose, ejecutivos = [] }) {
           </div>
           {isProductoNomina && (
             <NominaFields form={form} update={update} labelStyle={labelStyle} inputStyle={inputStyle} />
+          )}
+          {isProductoMotos && (
+            <div style={{
+              background: `linear-gradient(135deg, ${COLORS.yellowBg} 0%, #fff 100%)`,
+              border: `1.5px solid ${COLORS.moto}40`,
+              borderRadius: 10, padding: 14, marginTop: 2,
+            }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: COLORS.moto, textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 10px", display: "flex", alignItems: "center", gap: 6 }}>
+                🏍 Datos de Motos
+              </p>
+              <div>
+                <label style={labelStyle}>Sucursal *</label>
+                <select
+                  value={form.sucursal || ""}
+                  onChange={(e) => update("sucursal", e.target.value)}
+                  style={{ ...inputStyle, cursor: "pointer" }}
+                >
+                  <option value="">Seleccionar sucursal...</option>
+                  {SUCURSALES_MOTOS.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            </div>
           )}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div>
@@ -1275,8 +1302,8 @@ function DashboardAdmin() {
       try {
         await fetchWithRetry(async () => {
           const [cRes, eRes] = await Promise.all([
-            supabase.from("clientes").select("*").order("fecha_inicio", { ascending: false }),
-            supabase.from("ejecutivos").select("*"),
+            supabase.from("clientes").select("*", { count: "exact" }).range(0, 9999).order("id", { ascending: false }),
+            supabase.from("ejecutivos").select("*").range(0, 9999),
           ]);
           if (cRes.error) throw cRes.error;
           if (eRes.error) throw eRes.error;
@@ -1329,25 +1356,29 @@ function DashboardAdmin() {
     const presupuesto = ejecutivosPeriodo
       .filter((e) => e.tipo === "nómina")
       .reduce((s, e) => s + (e.meta || 0), 0);
-    const pctCumplimiento = presupuesto > 0 ? (ingresosTotales / presupuesto) * 100 : 0;
+    // Cumplimiento y falta se calculan SOLO contra nómina porque el presupuesto es de nómina
+    const pctCumplimiento = presupuesto > 0 ? (ingresosNomina / presupuesto) * 100 : 0;
     const totalDisp = dispersados.length;
+    const dispNomina = dispersados.filter((c) => c.producto === "Crédito de nómina").length;
+    const dispMotos = dispersados.filter((c) => c.producto !== "Crédito de nómina").length;
     const ticketPromedio = totalDisp > 0 ? ingresosTotales / totalDisp : 0;
+    const ticketPromedioNomina = dispNomina > 0 ? ingresosNomina / dispNomina : 0;
     const totalClientes = modo === "mensual"
       ? allClients.filter((c) => c.mes_registro === mes && c.anio_registro === anio).length
       : modo === "acumulado"
         ? allClients.filter((c) => c.anio_registro === anio).length
         : allClients.length;
     const tasaConversion = totalClientes > 0 ? (totalDisp / totalClientes) * 100 : 0;
-    // Proyección (solo mensual, mes actual)
+    // Proyección (solo mensual, mes actual) — basada en ingresosNomina para comparar con presupuesto
     const diasMes = getDaysInMonth(mes, anio);
     let diaEfectivo = today.getDate();
     if (anio < today.getFullYear() || (anio === today.getFullYear() && mes < today.getMonth() + 1)) diaEfectivo = diasMes;
     else if (anio > today.getFullYear() || (anio === today.getFullYear() && mes > today.getMonth() + 1)) diaEfectivo = 0;
-    const proyeccion = modo === "mensual" && diaEfectivo > 0 ? (ingresosTotales / diaEfectivo) * diasMes : 0;
-    const falta = Math.max(presupuesto - ingresosTotales, 0);
+    const proyeccion = modo === "mensual" && diaEfectivo > 0 ? (ingresosNomina / diaEfectivo) * diasMes : 0;
+    const falta = Math.max(presupuesto - ingresosNomina, 0);
     return {
       ingresosTotales, ingresosNomina, ingresosMotos, presupuesto, pctCumplimiento,
-      totalDisp, ticketPromedio, tasaConversion, totalClientes, proyeccion, falta, diasMes, diaEfectivo,
+      totalDisp, dispNomina, dispMotos, ticketPromedio, ticketPromedioNomina, tasaConversion, totalClientes, proyeccion, falta, diasMes, diaEfectivo,
     };
   }, [dispersados, ejecutivosPeriodo, allClients, modo, mes, anio]);
 
@@ -1532,9 +1563,9 @@ function DashboardAdmin() {
         {/* ─── KPIs FINANCIEROS ─── */}
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 14, marginBottom: 18 }}>
           {[
-            { icon: "💰", label: "Ingresos totales", value: formatMoney(Math.round(finance.ingresosTotales)), color: COLORS.primary, sub: `${finance.totalDisp} dispersados` },
-            { icon: "🎯", label: "Presupuesto", value: formatMoney(Math.round(finance.presupuesto)), color: COLORS.blue, sub: finance.presupuesto > 0 ? `${finance.pctCumplimiento.toFixed(1)}% cumplido` : "Sin meta" },
-            { icon: "📈", label: modo === "mensual" ? "Proyección cierre" : "Ticket promedio", value: modo === "mensual" ? formatMoney(Math.round(finance.proyeccion)) : formatMoney(Math.round(finance.ticketPromedio)), color: modo === "mensual" && finance.proyeccion >= finance.presupuesto ? COLORS.green : COLORS.yellow, sub: modo === "mensual" ? (finance.proyeccion >= finance.presupuesto ? "¡Superaría meta!" : "Por debajo de meta") : `por operación` },
+            { icon: "💰", label: "Ingresos totales", value: formatMoney(Math.round(finance.ingresosTotales)), color: COLORS.primary, sub: `${finance.dispNomina} nómina + ${finance.dispMotos} motos dispersados` },
+            { icon: "🎯", label: "Presupuesto (nómina)", value: formatMoney(Math.round(finance.presupuesto)), color: COLORS.blue, sub: finance.presupuesto > 0 ? `${finance.pctCumplimiento.toFixed(1)}% cumplido` : "Sin meta" },
+            { icon: "📈", label: modo === "mensual" ? "Proyección nómina" : "Ticket promedio", value: modo === "mensual" ? formatMoney(Math.round(finance.proyeccion)) : formatMoney(Math.round(finance.ticketPromedio)), color: modo === "mensual" && finance.proyeccion >= finance.presupuesto ? COLORS.green : COLORS.yellow, sub: modo === "mensual" ? (finance.proyeccion >= finance.presupuesto ? "¡Superaría meta!" : "Por debajo de meta") : `por operación` },
             { icon: "📊", label: "Tasa de conversión", value: `${finance.tasaConversion.toFixed(1)}%`, color: finance.tasaConversion >= 50 ? COLORS.green : finance.tasaConversion >= 25 ? COLORS.yellow : COLORS.red, sub: `${finance.totalDisp} de ${finance.totalClientes} clientes` },
           ].map((kpi, i) => (
             <div key={i} style={{
@@ -1554,10 +1585,10 @@ function DashboardAdmin() {
         {/* ─── Segunda fila KPIs ─── */}
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 14, marginBottom: 18 }}>
           {[
-            { icon: "💵", label: "Nómina", value: formatMoney(Math.round(finance.ingresosNomina)), color: COLORS.primary, sub: "Créditos dispersados" },
-            { icon: "🏍", label: "Motos", value: formatMoney(Math.round(finance.ingresosMotos)), color: COLORS.moto, sub: "Arrendamiento + Financiamiento" },
-            { icon: "🔻", label: "Falta por vender", value: finance.falta === 0 ? "¡Meta alcanzada!" : formatMoney(Math.round(finance.falta)), color: finance.falta === 0 ? COLORS.green : COLORS.red, sub: finance.falta === 0 ? "Excelente trabajo" : "para llegar a presupuesto" },
-            { icon: "🧾", label: "Ticket promedio", value: formatMoney(Math.round(finance.ticketPromedio)), color: COLORS.purple, sub: `${finance.totalDisp} operaciones` },
+            { icon: "💵", label: "Nómina", value: formatMoney(Math.round(finance.ingresosNomina)), color: COLORS.primary, sub: `${finance.dispNomina} créditos dispersados` },
+            { icon: "🏍", label: "Motos", value: formatMoney(Math.round(finance.ingresosMotos)), color: COLORS.moto, sub: `${finance.dispMotos} unidades — Arrend. + Financ.` },
+            { icon: "🔻", label: "Falta por vender", value: finance.falta === 0 ? "¡Meta alcanzada!" : formatMoney(Math.round(finance.falta)), color: finance.falta === 0 ? COLORS.green : COLORS.red, sub: finance.falta === 0 ? "Excelente trabajo" : "para llegar a presupuesto nómina" },
+            { icon: "🧾", label: "Ticket promedio", value: formatMoney(Math.round(finance.ticketPromedio)), color: COLORS.purple, sub: `${finance.totalDisp} operaciones totales` },
           ].map((kpi, i) => (
             <div key={i} style={{
               background: "#fff", borderRadius: 12, padding: isMobile ? "12px 14px" : "16px 20px",
@@ -1604,7 +1635,7 @@ function DashboardAdmin() {
               )}
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: COLORS.textLight }}>
-              <span>💰 Real: {formatMoney(Math.round(finance.ingresosTotales))}</span>
+              <span>💰 Nómina real: {formatMoney(Math.round(finance.ingresosNomina))}</span>
               {modo === "mensual" && <span style={{ color: COLORS.dark, fontWeight: 600 }}>▾ Proyección: {formatMoney(Math.round(finance.proyeccion))}</span>}
               <span>🎯 Meta: {formatMoney(Math.round(finance.presupuesto))}</span>
             </div>
@@ -2025,6 +2056,10 @@ function TablaClientes({ perfil }) {
       clientData.tipo_convenio = form.tipo_convenio || null;
       clientData.convenio = form.convenio || null;
     }
+    // Agregar sucursal para motos
+    if (form.producto !== "Crédito de nómina" && form.sucursal) {
+      clientData.sucursal = form.sucursal;
+    }
     await addClient(clientData);
     setShowModal(false);
   };
@@ -2291,7 +2326,7 @@ function TablaClientes({ perfil }) {
 
         <div style={{ display: "flex", gap: 14, marginBottom: 20, flexWrap: "wrap" }}>
           <KPICard label="Vendido (Nómina)" value={formatMoney(kpis.totalMonto)} sub="Estatus: Dispersión" color={COLORS.primary} />
-          <KPICard label="Motos vendidas" value={kpis.motosVendidas + " uds"} sub="Arrendamiento + Financiamiento" color="#F59E0B" />
+          <KPICard label="Motos vendidas" value={kpis.motosVendidas + " uds"} sub="Arrendamiento + Crédito" color="#F59E0B" />
           <KPICard label="En pipeline" value={kpis.enPipeline} sub="Clientes en proceso" color="#3B82F6" />
           <KPICard label="Total clientes" value={kpis.totalClientes} sub="Todos los estatus" color={COLORS.dark} />
         </div>
@@ -2386,7 +2421,7 @@ function TablaClientes({ perfil }) {
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
             <thead>
               <tr style={{ background: COLORS.dark }}>
-                {["Ejecutivo", "Cliente", "Producto", "Monto", "Fecha inicio", "Estatus", "Sin actualizar", "Actualización", "Fecha final", ""].map((h) => (
+                {["Ejecutivo", "Cliente", "Producto", "Monto", "Sucursal", "Convenio", "Fecha inicio", "Estatus", "Sin actualizar", "Actualización", "Fecha final", ""].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -2409,7 +2444,7 @@ function TablaClientes({ perfil }) {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: "center", padding: 40, color: COLORS.textLight, fontSize: 14 }}>
+                  <td colSpan={12} style={{ textAlign: "center", padding: 40, color: COLORS.textLight, fontSize: 14 }}>
                     No se encontraron clientes con esos filtros
                   </td>
                 </tr>
@@ -2442,6 +2477,14 @@ function TablaClientes({ perfil }) {
                     </td>
                     <td style={{ padding: "10px 14px", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                       <EditableCell client={client} field="monto" type="number" />
+                    </td>
+                    <td style={{ padding: "10px 14px", fontSize: 12, maxWidth: 120 }}>
+                      <EditableCell client={client} field="sucursal" />
+                    </td>
+                    <td style={{ padding: "10px 14px", fontSize: 12, maxWidth: 180 }}>
+                      <span title={client.convenio || ""} style={{ cursor: client.convenio ? "help" : "default", color: client.convenio ? COLORS.text : COLORS.textLight }}>
+                        {client.convenio ? (client.convenio.length > 25 ? client.convenio.substring(0, 25) + "..." : client.convenio) : "—"}
+                      </span>
                     </td>
                     <td style={{ padding: "10px 14px" }}>
                       <EditableCell client={client} field="fecha_inicio" type="date" />
@@ -4022,6 +4065,170 @@ function ResumenNomina() {
           );
         })()}
 
+        {/* ═══════════════════════════════════════════════════ */}
+        {/* RANKING DE SUCURSALES — NÓMINA                       */}
+        {/* ═══════════════════════════════════════════════════ */}
+        {(() => {
+          const nominaClientsConSuc = clients.filter((c) => c.producto === "Crédito de nómina" && c.sucursal);
+          const sucursalMapNom = {};
+
+          nominaClientsConSuc.forEach((c) => {
+            if (!sucursalMapNom[c.sucursal]) {
+              sucursalMapNom[c.sucursal] = {
+                nombre: c.sucursal,
+                total: 0,
+                dispersados: 0,
+                montoDispersado: 0,
+                rechazados: 0,
+                enPipeline: 0,
+              };
+            }
+            const entry = sucursalMapNom[c.sucursal];
+            entry.total++;
+            if (c.estatus === "Dispersión") {
+              entry.dispersados++;
+              entry.montoDispersado += (c.monto || 0);
+            } else if (c.estatus === "Rechazado") {
+              entry.rechazados++;
+            } else {
+              entry.enPipeline++;
+            }
+          });
+
+          const rankingSucNom = Object.values(sucursalMapNom)
+            .sort((a, b) => b.montoDispersado - a.montoDispersado);
+
+          const totalDispSucNom = rankingSucNom.reduce((s, c) => s + c.montoDispersado, 0);
+
+          return (
+            <>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: COLORS.dark, margin: "28px 0 14px", display: "flex", alignItems: "center", gap: 8 }}>
+                🏢 Ranking de Sucursales — Nómina
+                <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.textLight }}>— {MESES[mes - 1]} {anio}</span>
+              </h3>
+
+              <div style={{ display: "flex", gap: 14, marginBottom: 16, flexWrap: "wrap" }}>
+                <KPICardNomina icon="🏢" label="Sucursales activas" value={rankingSucNom.length} color={COLORS.blue} />
+                <KPICardNomina icon="👥" label="Clientes con sucursal" value={nominaClientsConSuc.length} color={COLORS.dark} />
+                <KPICardNomina icon="💰" label="Monto dispersado" value={formatMoney(totalDispSucNom)} color={COLORS.primary} />
+                <KPICardNomina icon="✅" label="Tasa de cierre" value={nominaClientsConSuc.length > 0 ? `${((rankingSucNom.reduce((s, c) => s + c.dispersados, 0) / nominaClientsConSuc.length) * 100).toFixed(0)}%` : "0%"} color={COLORS.green} />
+              </div>
+
+              {rankingSucNom.length === 0 ? (
+                <div style={{
+                  background: "#fff", borderRadius: 14,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                  padding: "40px 20px", textAlign: "center",
+                }}>
+                  <p style={{ fontSize: 40, margin: "0 0 12px" }}>🏢</p>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: COLORS.dark, margin: "0 0 8px" }}>
+                    Aún no hay clientes de nómina con sucursal asignada
+                  </p>
+                  <p style={{ fontSize: 13, color: COLORS.textLight, margin: 0 }}>
+                    Los clientes de nómina con sucursal aparecerán aquí con sus métricas.
+                  </p>
+                </div>
+              ) : (
+                <div style={{
+                  background: "#fff", borderRadius: 14,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                  overflowX: "auto",
+                }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
+                    <thead>
+                      <tr style={{ background: COLORS.dark }}>
+                        {["#", "Sucursal", "Clientes", "Dispersados", "En pipeline", "Rechazados", "Monto dispersado", "% del total", "Tasa cierre"].map((h) => (
+                          <th key={h} style={{
+                            padding: "12px 14px", fontSize: 11, fontWeight: 700, color: "#fff",
+                            textAlign: h === "#" ? "center" : "left", textTransform: "uppercase", letterSpacing: 0.5,
+                            whiteSpace: "nowrap", borderBottom: `3px solid ${COLORS.primary}`,
+                          }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rankingSucNom.map((suc, idx) => {
+                        const tasaCierre = suc.total > 0 ? (suc.dispersados / suc.total) * 100 : 0;
+                        const pctTotal = totalDispSucNom > 0 ? (suc.montoDispersado / totalDispSucNom) * 100 : 0;
+                        const tc = pctColor(tasaCierre);
+                        return (
+                          <tr key={suc.nombre} style={{
+                            background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
+                            borderBottom: `1px solid ${COLORS.border}`,
+                          }}>
+                            <td style={{ padding: "12px 14px", textAlign: "center" }}>
+                              <span style={{
+                                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                                width: 26, height: 26, borderRadius: "50%", fontSize: 12, fontWeight: 800,
+                                background: idx === 0 ? "#FEF08A" : idx === 1 ? "#E5E7EB" : idx === 2 ? "#FDBA74" : COLORS.bg,
+                                color: idx < 3 ? COLORS.dark : COLORS.textLight,
+                              }}>
+                                {idx + 1}
+                              </span>
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 700, color: COLORS.text }}>
+                              {suc.nombre}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 700, color: COLORS.text, textAlign: "center" }}>
+                              {suc.total}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 700, color: COLORS.green, textAlign: "center" }}>
+                              {suc.dispersados}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 600, color: COLORS.blue, textAlign: "center" }}>
+                              {suc.enPipeline}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 600, color: COLORS.red, textAlign: "center" }}>
+                              {suc.rechazados}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 700, color: COLORS.primary, fontVariantNumeric: "tabular-nums" }}>
+                              {formatMoney(suc.montoDispersado)}
+                            </td>
+                            <td style={{ padding: "12px 14px" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                <div style={{ flex: 1, height: 8, background: "#F1F5F9", borderRadius: 4, overflow: "hidden" }}>
+                                  <div style={{ width: `${Math.min(pctTotal, 100)}%`, height: "100%", background: COLORS.primary, borderRadius: 4 }} />
+                                </div>
+                                <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.text, minWidth: 36 }}>{pctTotal.toFixed(1)}%</span>
+                              </div>
+                            </td>
+                            <td style={{ padding: "12px 14px" }}>
+                              <span style={{
+                                display: "inline-block", padding: "3px 10px", borderRadius: 20,
+                                fontSize: 12, fontWeight: 700, color: tc.color, background: tc.bg,
+                              }}>
+                                {tasaCierre.toFixed(0)}%
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      <tr style={{ background: COLORS.dark }}>
+                        <td style={{ padding: "12px 14px" }} />
+                        <td style={{ padding: "12px 14px", fontWeight: 800, fontSize: 13, color: "#fff" }}>TOTAL</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: "#fff", textAlign: "center" }}>{nominaClientsConSuc.length}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: COLORS.primary, textAlign: "center" }}>{rankingSucNom.reduce((s, c) => s + c.dispersados, 0)}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: COLORS.blueBg, textAlign: "center" }}>{rankingSucNom.reduce((s, c) => s + c.enPipeline, 0)}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: "#FF8A8A", textAlign: "center" }}>{rankingSucNom.reduce((s, c) => s + c.rechazados, 0)}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 800, fontSize: 14, color: COLORS.primary, fontVariantNumeric: "tabular-nums" }}>{formatMoney(totalDispSucNom)}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 13, color: "#fff" }}>100%</td>
+                        <td style={{ padding: "12px 14px" }}>
+                          <span style={{
+                            display: "inline-block", padding: "3px 10px", borderRadius: 20, fontSize: 12, fontWeight: 700,
+                            color: "#fff", background: nominaClientsConSuc.length > 0 ? (rankingSucNom.reduce((s, c) => s + c.dispersados, 0) / nominaClientsConSuc.length * 100 >= 50 ? COLORS.green : COLORS.yellow) : COLORS.textLight,
+                          }}>
+                            {nominaClientsConSuc.length > 0 ? ((rankingSucNom.reduce((s, c) => s + c.dispersados, 0) / nominaClientsConSuc.length) * 100).toFixed(0) : 0}%
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </>
+          );
+        })()}
+
         <p style={{ fontSize: 11, color: COLORS.primary, fontWeight: 600, textAlign: "center", marginTop: 20 }}>
           Los datos de "Real" se calculan automáticamente de la tabla de clientes (estatus = Dispersión)
         </p>
@@ -4109,7 +4316,7 @@ function ResumenMotos() {
       const montoArrendamiento = arrClients.reduce((s, c) => s + (c.monto || 0), 0);
 
       const finClients = clients.filter(
-        (c) => c.ejecutivo === ej.nombre && c.estatus === "Dispersión" && c.producto === "Financiamiento de motos"
+        (c) => c.ejecutivo === ej.nombre && c.estatus === "Dispersión" && c.producto === "Crédito de motos"
       );
       const financiamiento = finClients.length;
       const montoFinanciamiento = finClients.reduce((s, c) => s + (c.monto || 0), 0);
@@ -4118,7 +4325,10 @@ function ResumenMotos() {
       const proyeccion = diasTranscurridos > 0 ? (real / diasTranscurridos) * diasMes : 0;
       const falta = Math.max(ej.meta - real, 0);
       const ticketPromedio = real > 0 ? montoTotal / real : 0;
-      return { ...ej, real, arrendamiento, financiamiento, montoTotal, montoArrendamiento, montoFinanciamiento, ticketPromedio, avance, proyeccion, falta };
+      const metaDinero = ej.meta_dinero || 0;
+      const avanceDinero = metaDinero > 0 ? (montoTotal / metaDinero) * 100 : 0;
+      const faltaDinero = Math.max(metaDinero - montoTotal, 0);
+      return { ...ej, real, arrendamiento, financiamiento, montoTotal, montoArrendamiento, montoFinanciamiento, ticketPromedio, avance, proyeccion, falta, metaDinero, avanceDinero, faltaDinero };
     });
   }, [motosEjecutivos, clients, diasTranscurridos, diasMes]);
 
@@ -4134,7 +4344,10 @@ function ResumenMotos() {
     const avance = meta > 0 ? (real / meta) * 100 : 0;
     const proyeccion = diasTranscurridos > 0 ? (real / diasTranscurridos) * diasMes : 0;
     const falta = Math.max(meta - real, 0);
-    return { meta, real, avance, proyeccion, falta, arrendamiento: arr, financiamiento: fin, montoTotal, montoArrendamiento: montoArr, montoFinanciamiento: montoFin, ticketPromedio: ticketProm };
+    const metaDinero = tableData.reduce((s, e) => s + (e.metaDinero || 0), 0);
+    const avanceDinero = metaDinero > 0 ? (montoTotal / metaDinero) * 100 : 0;
+    const faltaDinero = Math.max(metaDinero - montoTotal, 0);
+    return { meta, real, avance, proyeccion, falta, arrendamiento: arr, financiamiento: fin, montoTotal, montoArrendamiento: montoArr, montoFinanciamiento: montoFin, ticketPromedio: ticketProm, metaDinero, avanceDinero, faltaDinero };
   }, [tableData, diasTranscurridos, diasMes]);
 
   if (loadingEjecutivos || loadingClients) {
@@ -4168,7 +4381,7 @@ function ResumenMotos() {
       <div style={{ padding: "20px 24px", maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ marginBottom: 20 }}>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: COLORS.dark, margin: "0 0 4px" }}>
-            Resumen de Ejecutivos — Financiamiento y Arrendamiento
+            Resumen de Ejecutivos — Crédito y Arrendamiento de Motos
           </h1>
           <p style={{ fontSize: 13, color: COLORS.textLight, margin: 0 }}>
             Avance de ventas contra meta mensual — <strong>unidades vendidas</strong> e <strong>ingresos generados</strong>
@@ -4230,15 +4443,19 @@ function ResumenMotos() {
           <KPICardMotos icon="🎯" label="Meta total equipo" value={`${totals.meta} uds`} color={COLORS.dark} />
           <KPICardMotos icon="🏍" label="Unidades vendidas" value={totals.real} sub={`${totals.avance.toFixed(1)}% de la meta`} color={COLORS.primary} />
           <KPICardMotos icon="📋" label="Arrendamiento" value={totals.arrendamiento} sub="unidades" color={COLORS.yellow} />
-          <KPICardMotos icon="💳" label="Financiamiento" value={totals.financiamiento} sub="unidades" color={COLORS.purple} />
+          <KPICardMotos icon="💳" label="Crédito motos" value={totals.financiamiento} sub="unidades" color={COLORS.purple} />
           <KPICardMotos icon="📈" label="Proyección" value={`${Math.round(totals.proyeccion)} uds`} sub={totals.proyeccion >= totals.meta ? "¡Superaría la meta!" : "Por debajo de meta"} color={totals.proyeccion >= totals.meta ? COLORS.green : COLORS.yellow} />
         </div>
         {/* KPIs de dinero */}
         <div style={{ display: "flex", gap: 14, marginBottom: 18, flexWrap: "wrap" }}>
           <KPICardMotos icon="💰" label="Ingresos totales motos" value={formatMoney(Math.round(totals.montoTotal))} color={COLORS.primary} />
+          <KPICardMotos icon="🎯" label="Meta dinero equipo" value={formatMoney(Math.round(totals.metaDinero))} sub={totals.metaDinero > 0 ? `${totals.avanceDinero.toFixed(1)}% de avance` : "Sin meta configurada"} color={COLORS.dark} />
           <KPICardMotos icon="📋" label="Ingresos arrendamiento" value={formatMoney(Math.round(totals.montoArrendamiento))} sub={`${totals.arrendamiento} uds`} color={COLORS.yellow} />
-          <KPICardMotos icon="💳" label="Ingresos financiamiento" value={formatMoney(Math.round(totals.montoFinanciamiento))} sub={`${totals.financiamiento} uds`} color={COLORS.purple} />
+          <KPICardMotos icon="💳" label="Ingresos crédito motos" value={formatMoney(Math.round(totals.montoFinanciamiento))} sub={`${totals.financiamiento} uds`} color={COLORS.purple} />
           <KPICardMotos icon="💵" label="Ticket promedio" value={formatMoney(Math.round(totals.ticketPromedio))} sub="por unidad" color={COLORS.blue} />
+          {totals.metaDinero > 0 && (
+            <KPICardMotos icon="🔻" label="Falta por vender ($)" value={totals.faltaDinero === 0 ? "¡Meta alcanzada!" : formatMoney(Math.round(totals.faltaDinero))} color={totals.faltaDinero === 0 ? COLORS.green : COLORS.red} />
+          )}
         </div>
 
         <div style={{
@@ -4249,7 +4466,7 @@ function ResumenMotos() {
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1050 }}>
             <thead>
               <tr style={{ background: COLORS.dark }}>
-                {["Ejecutivo", "Meta (uds)", "Real (uds)", "Arrend.", "Financ.", "Monto vendido", "Ticket prom.", "% Avance", "Progreso", "Proyección", "Falta"].map((h) => (
+                {["Ejecutivo", "Meta (uds)", "Real (uds)", "Arrend.", "Crédito", "Monto vendido", "Ticket prom.", "Meta ($)", "% Avance", "Progreso", "Proyección", "Falta"].map((h) => (
                   <th key={h} style={{
                     padding: "12px 14px", fontSize: 11, fontWeight: 700, color: "#fff",
                     textAlign: "left", textTransform: "uppercase", letterSpacing: 0.5,
@@ -4299,6 +4516,18 @@ function ResumenMotos() {
                     <td style={{ padding: "14px", textAlign: "right" }}>
                       <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.textLight, fontVariantNumeric: "tabular-nums" }}>{formatMoney(Math.round(ej.ticketPromedio))}</span>
                     </td>
+                    <td style={{ padding: "14px", textAlign: "right" }}>
+                      {ej.metaDinero > 0 ? (
+                        <div>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.dark, fontVariantNumeric: "tabular-nums" }}>{formatMoney(Math.round(ej.metaDinero))}</span>
+                          <p style={{ fontSize: 10, color: ej.avanceDinero >= 80 ? COLORS.green : ej.avanceDinero >= 50 ? COLORS.yellow : COLORS.red, margin: "2px 0 0", fontWeight: 600 }}>
+                            {ej.avanceDinero.toFixed(0)}%
+                          </p>
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: 11, color: COLORS.textLight }}>—</span>
+                      )}
+                    </td>
                     <td style={{ padding: "14px" }}>
                       <span style={{
                         display: "inline-block", padding: "4px 12px", borderRadius: 20,
@@ -4332,6 +4561,18 @@ function ResumenMotos() {
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 700, color: COLORS.purple }}>{totals.financiamiento}</td>
                 <td style={{ padding: "14px", textAlign: "right", fontWeight: 800, fontSize: 14, color: COLORS.primary }}>{formatMoney(Math.round(totals.montoTotal))}</td>
                 <td style={{ padding: "14px", textAlign: "right", fontWeight: 600, fontSize: 12, color: "#ccc" }}>{formatMoney(Math.round(totals.ticketPromedio))}</td>
+                <td style={{ padding: "14px", textAlign: "right" }}>
+                  {totals.metaDinero > 0 ? (
+                    <div>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.primary, fontVariantNumeric: "tabular-nums" }}>{formatMoney(Math.round(totals.metaDinero))}</span>
+                      <p style={{ fontSize: 10, color: "#fff", margin: "2px 0 0", fontWeight: 600 }}>
+                        {totals.avanceDinero.toFixed(0)}%
+                      </p>
+                    </div>
+                  ) : (
+                    <span style={{ fontSize: 11, color: "#ffffff60" }}>—</span>
+                  )}
+                </td>
                 <td style={{ padding: "14px" }}>
                   <span style={{
                     display: "inline-block", padding: "4px 12px", borderRadius: 20,
@@ -4372,7 +4613,7 @@ function ResumenMotos() {
                     <p style={{ fontSize: 15, fontWeight: 700, color: COLORS.text, margin: 0 }}>
                       {ej.nombre.split(" ").slice(0, 3).join(" ")}
                     </p>
-                    <p style={{ fontSize: 11, color: COLORS.textLight, margin: "2px 0 0" }}>Motos — Arrendamiento y Financiamiento</p>
+                    <p style={{ fontSize: 11, color: COLORS.textLight, margin: "2px 0 0" }}>Motos — Arrendamiento y Crédito</p>
                   </div>
                   <span style={{
                     padding: "5px 14px", borderRadius: 20, fontSize: 15, fontWeight: 800,
@@ -4396,6 +4637,11 @@ function ResumenMotos() {
                 }}>
                   <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>Monto vendido</p>
                   <p style={{ fontSize: 20, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{formatMoney(Math.round(ej.montoTotal))}</p>
+                  {ej.metaDinero > 0 && (
+                    <p style={{ fontSize: 10, color: ej.avanceDinero >= 80 ? COLORS.green : ej.avanceDinero >= 50 ? COLORS.yellow : COLORS.red, margin: "2px 0 0", fontWeight: 700 }}>
+                      {ej.avanceDinero.toFixed(0)}% de meta ({formatMoney(Math.round(ej.metaDinero))})
+                    </p>
+                  )}
                   <p style={{ fontSize: 10, color: COLORS.textLight, margin: "2px 0 0" }}>
                     Ticket promedio: {formatMoney(Math.round(ej.ticketPromedio))}
                   </p>
@@ -4431,6 +4677,170 @@ function ResumenMotos() {
             );
           })}
         </div>
+
+        {/* ═══════════════════════════════════════════════════ */}
+        {/* RANKING DE SUCURSALES — MOTOS                       */}
+        {/* ═══════════════════════════════════════════════════ */}
+        {(() => {
+          const motosClients = clients.filter((c) => c.producto !== "Crédito de nómina" && c.sucursal);
+          const sucursalMap = {};
+
+          motosClients.forEach((c) => {
+            if (!sucursalMap[c.sucursal]) {
+              sucursalMap[c.sucursal] = {
+                nombre: c.sucursal,
+                total: 0,
+                dispersados: 0,
+                montoDispersado: 0,
+                rechazados: 0,
+                enPipeline: 0,
+              };
+            }
+            const entry = sucursalMap[c.sucursal];
+            entry.total++;
+            if (c.estatus === "Dispersión") {
+              entry.dispersados++;
+              entry.montoDispersado += (c.monto || 0);
+            } else if (c.estatus === "Rechazado") {
+              entry.rechazados++;
+            } else {
+              entry.enPipeline++;
+            }
+          });
+
+          const rankingSucursales = Object.values(sucursalMap)
+            .sort((a, b) => b.montoDispersado - a.montoDispersado);
+
+          const totalDispSuc = rankingSucursales.reduce((s, c) => s + c.montoDispersado, 0);
+
+          return (
+            <>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: COLORS.dark, margin: "28px 0 14px", display: "flex", alignItems: "center", gap: 8 }}>
+                🏢 Ranking de Sucursales
+                <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.textLight }}>— {MESES[mes - 1]} {anio}</span>
+              </h3>
+
+              <div style={{ display: "flex", gap: 14, marginBottom: 16, flexWrap: "wrap" }}>
+                <KPICardMotos icon="🏢" label="Sucursales activas" value={rankingSucursales.length} color={COLORS.moto} />
+                <KPICardMotos icon="👥" label="Clientes con sucursal" value={motosClients.length} color={COLORS.dark} />
+                <KPICardMotos icon="💰" label="Monto dispersado" value={formatMoney(totalDispSuc)} color={COLORS.primary} />
+                <KPICardMotos icon="✅" label="Tasa de cierre" value={motosClients.length > 0 ? `${((rankingSucursales.reduce((s, c) => s + c.dispersados, 0) / motosClients.length) * 100).toFixed(0)}%` : "0%"} color={COLORS.green} />
+              </div>
+
+              {rankingSucursales.length === 0 ? (
+                <div style={{
+                  background: "#fff", borderRadius: 14,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                  padding: "40px 20px", textAlign: "center",
+                }}>
+                  <p style={{ fontSize: 40, margin: "0 0 12px" }}>🏢</p>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: COLORS.dark, margin: "0 0 8px" }}>
+                    Aún no hay clientes de motos con sucursal asignada
+                  </p>
+                  <p style={{ fontSize: 13, color: COLORS.textLight, margin: 0 }}>
+                    Los nuevos clientes de motos con sucursal aparecerán aquí.
+                  </p>
+                </div>
+              ) : (
+                <div style={{
+                  background: "#fff", borderRadius: 14,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                  overflowX: "auto",
+                }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
+                    <thead>
+                      <tr style={{ background: COLORS.dark }}>
+                        {["#", "Sucursal", "Clientes", "Dispersados", "En pipeline", "Rechazados", "Monto dispersado", "% del total", "Tasa cierre"].map((h) => (
+                          <th key={h} style={{
+                            padding: "12px 14px", fontSize: 11, fontWeight: 700, color: "#fff",
+                            textAlign: h === "#" ? "center" : "left", textTransform: "uppercase", letterSpacing: 0.5,
+                            whiteSpace: "nowrap", borderBottom: `3px solid ${COLORS.moto}`,
+                          }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rankingSucursales.map((suc, idx) => {
+                        const tasaCierre = suc.total > 0 ? (suc.dispersados / suc.total) * 100 : 0;
+                        const pctTotal = totalDispSuc > 0 ? (suc.montoDispersado / totalDispSuc) * 100 : 0;
+                        const tc = pctColor(tasaCierre);
+                        return (
+                          <tr key={suc.nombre} style={{
+                            background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
+                            borderBottom: `1px solid ${COLORS.border}`,
+                          }}>
+                            <td style={{ padding: "12px 14px", textAlign: "center" }}>
+                              <span style={{
+                                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                                width: 26, height: 26, borderRadius: "50%", fontSize: 12, fontWeight: 800,
+                                background: idx === 0 ? "#FEF08A" : idx === 1 ? "#E5E7EB" : idx === 2 ? "#FDBA74" : COLORS.bg,
+                                color: idx < 3 ? COLORS.dark : COLORS.textLight,
+                              }}>
+                                {idx + 1}
+                              </span>
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 700, color: COLORS.text }}>
+                              {suc.nombre}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 700, color: COLORS.text, textAlign: "center" }}>
+                              {suc.total}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 700, color: COLORS.green, textAlign: "center" }}>
+                              {suc.dispersados}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 600, color: COLORS.blue, textAlign: "center" }}>
+                              {suc.enPipeline}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 600, color: COLORS.red, textAlign: "center" }}>
+                              {suc.rechazados}
+                            </td>
+                            <td style={{ padding: "12px 14px", fontSize: 14, fontWeight: 700, color: COLORS.primary, fontVariantNumeric: "tabular-nums" }}>
+                              {formatMoney(suc.montoDispersado)}
+                            </td>
+                            <td style={{ padding: "12px 14px" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                <div style={{ flex: 1, height: 8, background: "#F1F5F9", borderRadius: 4, overflow: "hidden" }}>
+                                  <div style={{ width: `${Math.min(pctTotal, 100)}%`, height: "100%", background: COLORS.moto, borderRadius: 4 }} />
+                                </div>
+                                <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.text, minWidth: 36 }}>{pctTotal.toFixed(1)}%</span>
+                              </div>
+                            </td>
+                            <td style={{ padding: "12px 14px" }}>
+                              <span style={{
+                                display: "inline-block", padding: "3px 10px", borderRadius: 20,
+                                fontSize: 12, fontWeight: 700, color: tc.color, background: tc.bg,
+                              }}>
+                                {tasaCierre.toFixed(0)}%
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      <tr style={{ background: COLORS.dark }}>
+                        <td style={{ padding: "12px 14px" }} />
+                        <td style={{ padding: "12px 14px", fontWeight: 800, fontSize: 13, color: "#fff" }}>TOTAL</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: "#fff", textAlign: "center" }}>{motosClients.length}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: COLORS.primary, textAlign: "center" }}>{rankingSucursales.reduce((s, c) => s + c.dispersados, 0)}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: COLORS.blueBg, textAlign: "center" }}>{rankingSucursales.reduce((s, c) => s + c.enPipeline, 0)}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: "#FF8A8A", textAlign: "center" }}>{rankingSucursales.reduce((s, c) => s + c.rechazados, 0)}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 800, fontSize: 14, color: COLORS.primary, fontVariantNumeric: "tabular-nums" }}>{formatMoney(totalDispSuc)}</td>
+                        <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 13, color: "#fff" }}>100%</td>
+                        <td style={{ padding: "12px 14px" }}>
+                          <span style={{
+                            display: "inline-block", padding: "3px 10px", borderRadius: 20, fontSize: 12, fontWeight: 700,
+                            color: "#fff", background: motosClients.length > 0 ? (rankingSucursales.reduce((s, c) => s + c.dispersados, 0) / motosClients.length * 100 >= 50 ? COLORS.green : COLORS.yellow) : COLORS.textLight,
+                          }}>
+                            {motosClients.length > 0 ? ((rankingSucursales.reduce((s, c) => s + c.dispersados, 0) / motosClients.length) * 100).toFixed(0) : 0}%
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </>
+          );
+        })()}
 
         <p style={{ fontSize: 11, color: COLORS.primary, fontWeight: 600, textAlign: "center", marginTop: 20 }}>
           Unidades = clientes con estatus "Dispersión" | Montos = campo "monto" de cada cliente dispersado
@@ -4982,17 +5392,27 @@ function AddExecutiveForm({ onAdd, onClose, type }) {
   );
 }
 
-function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, type, onUpdateMeta, onToggleActivo, onUpdateTipo }) {
+function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, type, onUpdateMeta, onUpdateMetaDinero, onToggleActivo, onUpdateTipo }) {
   const [showAdd, setShowAdd] = useState(false);
 
   const totalMeta = data.filter((e) => e.activo).reduce((s, e) => s + e.meta, 0);
+  const totalMetaDinero = data.filter((e) => e.activo).reduce((s, e) => s + (e.meta_dinero || 0), 0);
   const activos = data.filter((e) => e.activo).length;
+  const showMetaDinero = type === "motos";
 
   const handleUpdateMeta = async (id, newMeta) => {
     try {
       await onUpdateMeta(id, newMeta);
     } catch (err) {
       console.error("Error updating meta:", err);
+    }
+  };
+
+  const handleUpdateMetaDinero = async (id, newMetaDinero) => {
+    try {
+      if (onUpdateMetaDinero) await onUpdateMetaDinero(id, newMetaDinero);
+    } catch (err) {
+      console.error("Error updating meta dinero:", err);
     }
   };
 
@@ -5044,6 +5464,14 @@ function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, typ
                 {isMoney ? formatMoney(totalMeta) : `${totalMeta} uds`}
               </p>
             </div>
+            {showMetaDinero && (
+              <div style={{ textAlign: "center" }}>
+                <p style={{ fontSize: 10, color: "#ffffff70", margin: 0, textTransform: "uppercase" }}>Meta dinero</p>
+                <p style={{ fontSize: 22, fontWeight: 800, color: COLORS.primary, margin: 0 }}>
+                  {formatMoney(totalMetaDinero)}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -5059,6 +5487,11 @@ function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, typ
               <th style={{ padding: "12px 18px", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textAlign: "center", textTransform: "uppercase", letterSpacing: 0.5 }}>
                 Meta mensual {isMoney ? "($)" : "(unidades)"}
               </th>
+              {showMetaDinero && (
+                <th style={{ padding: "12px 18px", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textAlign: "center", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  Meta dinero ($)
+                </th>
+              )}
               <th style={{ padding: "12px 18px", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textAlign: "center", textTransform: "uppercase", letterSpacing: 0.5 }}>Activo</th>
             </tr>
           </thead>
@@ -5117,6 +5550,15 @@ function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, typ
                     isMoney={isMoney}
                   />
                 </td>
+                {showMetaDinero && (
+                  <td style={{ padding: "14px 18px", textAlign: "center" }}>
+                    <EditableMetaCell
+                      value={ej.meta_dinero || 0}
+                      onChange={(newMetaDinero) => handleUpdateMetaDinero(ej.id, newMetaDinero)}
+                      isMoney={true}
+                    />
+                  </td>
+                )}
                 <td style={{ padding: "14px 18px", textAlign: "center" }}>
                   <div style={{ display: "flex", justifyContent: "center" }}>
                     <Toggle checked={ej.activo} onChange={() => handleToggleActivo(ej.id)} />
@@ -5145,7 +5587,7 @@ function CatalogoEjecutivos() {
   const [showCopied, setShowCopied] = useState(false);
   const [copying, setCopying] = useState(false);
 
-  const { nominaEjecutivos: nomina, motosEjecutivos: motos, loading, updateMeta, updateTipo, toggleActivo, copyFromPreviousMonth } = useExecutives({ mes, anio });
+  const { nominaEjecutivos: nomina, motosEjecutivos: motos, loading, updateMeta, updateMetaDinero, updateTipo, toggleActivo, copyFromPreviousMonth } = useExecutives({ mes, anio });
 
   const handleCopyPrevMonth = async () => {
     setCopying(true);
@@ -5269,14 +5711,15 @@ function CatalogoEjecutivos() {
 
             {/* Motos Table */}
             <ExecutiveTable
-              title="Ejecutivos de Financiamiento y Arrendamiento"
-              subtitle="Meta medida en unidades vendidas"
+              title="Ejecutivos de Crédito y Arrendamiento de Motos"
+              subtitle="Meta en unidades vendidas Y en pesos ($)"
               data={motos}
               isMoney={false}
               accentColor={COLORS.moto}
               icon="🏍"
               type="motos"
               onUpdateMeta={updateMeta}
+              onUpdateMetaDinero={updateMetaDinero}
               onUpdateTipo={updateTipo}
               onToggleActivo={toggleActivo}
             />
@@ -5501,12 +5944,18 @@ function AddModal({ onAdd, onClose, ejecutivoTipo }) {
   };
 
   const isNomina = (ejecutivoTipo === "nómina" || ejecutivoTipo === "nomina");
+  const isMotos = ejecutivoTipo === "motos";
   const showNominaFields = isNomina && form.producto === "Crédito de nómina";
+  const showMotosFields = isMotos && form.producto !== "Crédito de nómina" && form.producto !== "";
 
   const handleAdd = () => {
     if (!form.nombre.trim() || !form.producto) { alert("Llena nombre y producto"); return; }
     if (showNominaFields && (!form.sucursal || !form.convenio)) {
       alert("Para Crédito de nómina, Sucursal y Convenio son obligatorios");
+      return;
+    }
+    if (showMotosFields && !form.sucursal) {
+      alert("Selecciona una sucursal para el cliente de motos");
       return;
     }
     onAdd(form);
@@ -5547,6 +5996,28 @@ function AddModal({ onAdd, onClose, ejecutivoTipo }) {
           </div>
           {showNominaFields && (
             <NominaFields form={form} update={update} labelStyle={labelStyle} inputStyle={inputStyle} />
+          )}
+          {showMotosFields && (
+            <div style={{
+              background: `linear-gradient(135deg, ${COLORS.yellowBg} 0%, #fff 100%)`,
+              border: `1.5px solid ${COLORS.moto}40`,
+              borderRadius: 10, padding: 14, marginTop: 2,
+            }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: COLORS.moto, textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 10px", display: "flex", alignItems: "center", gap: 6 }}>
+                🏍 Datos de Motos
+              </p>
+              <div>
+                <label style={labelStyle}>Sucursal *</label>
+                <select
+                  value={form.sucursal || ""}
+                  onChange={(e) => update("sucursal", e.target.value)}
+                  style={{ ...inputStyle, cursor: "pointer" }}
+                >
+                  <option value="">Seleccionar sucursal...</option>
+                  {SUCURSALES_MOTOS.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            </div>
           )}
           <div>
             <label style={labelStyle}>Monto ($)</label>
@@ -5786,6 +6257,10 @@ function PortalEjecutivo({ perfil }) {
       clientData.tipo_convenio = form.tipo_convenio || null;
       clientData.convenio = form.convenio || null;
     }
+    // Agregar sucursal para motos
+    if (form.producto !== "Crédito de nómina" && form.sucursal) {
+      clientData.sucursal = form.sucursal;
+    }
     await addClient(clientData);
     setShowAdd(false);
   };
@@ -5822,6 +6297,56 @@ function PortalEjecutivo({ perfil }) {
           <p style={{ fontSize: 13, color: COLORS.textLight, margin: 0 }}>
             {ejecutivo} — Solo tú ves tus clientes. Los administradores no aparecen aquí.
           </p>
+        </div>
+
+        {/* Month Selector */}
+        <div style={{
+          background: "#fff", borderRadius: 14, padding: "14px 20px", marginBottom: 16,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          display: "flex", alignItems: "center", gap: 14, justifyContent: "center",
+        }}>
+          <button
+            onClick={() => {
+              if (mes === 1) { setMes(12); setAnio(anio - 1); }
+              else setMes(mes - 1);
+            }}
+            style={{
+              width: 36, height: 36, borderRadius: "50%", border: `1.5px solid ${COLORS.border}`,
+              background: "#fff", cursor: "pointer", fontSize: 16, color: COLORS.textLight,
+              display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "inherit",
+            }}
+          >
+            ←
+          </button>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }}>
+              <span style={{ fontSize: 13, color: COLORS.textLight }}>📅</span>
+              <span style={{ fontSize: 18, fontWeight: 800, color: COLORS.dark }}>
+                {MESES[mes - 1]} {anio}
+              </span>
+              {mes === now.getMonth() + 1 && anio === now.getFullYear() && (
+                <span style={{
+                  fontSize: 10, fontWeight: 700, color: COLORS.primary, background: COLORS.primaryLight,
+                  padding: "2px 8px", borderRadius: 10, textTransform: "uppercase",
+                }}>
+                  Mes actual
+                </span>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              if (mes === 12) { setMes(1); setAnio(anio + 1); }
+              else setMes(mes + 1);
+            }}
+            style={{
+              width: 36, height: 36, borderRadius: "50%", border: `1.5px solid ${COLORS.border}`,
+              background: "#fff", cursor: "pointer", fontSize: 16, color: COLORS.textLight,
+              display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "inherit",
+            }}
+          >
+            →
+          </button>
         </div>
 
         {/* Pipeline Summary */}
@@ -5985,6 +6510,7 @@ function ExportExcel() {
             .from("clientes")
             .select("*")
             .eq("anio_registro", anio)
+            .range(0, 9999)
             .order("mes_registro");
 
           if (error) throw error;
@@ -6019,15 +6545,20 @@ function ExportExcel() {
       const dispersiones = clients.filter((c) => c.estatus === "Dispersión");
       const nominaDisp = dispersiones.filter((c) => c.producto === "Crédito de nómina");
       const motosDisp = dispersiones.filter((c) => c.producto !== "Crédito de nómina");
-      const montoNomina = nominaDisp.reduce((s, c) => s + c.monto, 0);
+      const montoNomina = nominaDisp.reduce((s, c) => s + (c.monto || 0), 0);
       const udsMotos = motosDisp.length;
+      const montoMotos = motosDisp.reduce((s, c) => s + (c.monto || 0), 0);
+      const rechazados = clients.filter((c) => c.estatus === "Rechazado").length;
 
       stats[mes] = {
         totalClientes,
         dispersiones: dispersiones.length,
-        enPipeline: totalClientes - dispersiones.length,
+        rechazados,
+        enPipeline: totalClientes - dispersiones.length - rechazados,
         montoNomina,
         udsMotos,
+        montoMotos,
+        ingresosTotales: montoNomina + montoMotos,
       };
     });
     return stats;
@@ -6038,8 +6569,11 @@ function ExportExcel() {
     return {
       clientes: all.reduce((s, m) => s + m.totalClientes, 0),
       dispersiones: all.reduce((s, m) => s + m.dispersiones, 0),
+      rechazados: all.reduce((s, m) => s + m.rechazados, 0),
       montoNomina: all.reduce((s, m) => s + m.montoNomina, 0),
       udsMotos: all.reduce((s, m) => s + m.udsMotos, 0),
+      montoMotos: all.reduce((s, m) => s + m.montoMotos, 0),
+      ingresosTotales: all.reduce((s, m) => s + m.ingresosTotales, 0),
       meses: Object.keys(monthStats).length,
     };
   }, [monthStats]);

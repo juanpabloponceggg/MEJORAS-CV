@@ -40,6 +40,7 @@ export function useExecutives({ mes, anio }) {
           nombre,
           tipo: "nómina",
           meta: 0,
+          meta_dinero: 0,
           activo: true,
           mes,
           anio,
@@ -97,6 +98,23 @@ export function useExecutives({ mes, anio }) {
 
     setEjecutivos((prev) =>
       prev.map((e) => (e.id === ejecutivoId ? { ...e, meta: newMeta } : e))
+    );
+    return { success: true };
+  };
+
+  // ─── Actualizar meta de dinero de un ejecutivo (motos) ───
+  const updateMetaDinero = async (ejecutivoId, newMetaDinero) => {
+    const { data, error: err } = await supabase
+      .from("ejecutivos")
+      .update({ meta_dinero: newMetaDinero })
+      .eq("id", ejecutivoId)
+      .select();
+
+    if (err) return { success: false, error: err.message };
+    if (!data || data.length === 0) return { success: false, error: "No row updated" };
+
+    setEjecutivos((prev) =>
+      prev.map((e) => (e.id === ejecutivoId ? { ...e, meta_dinero: newMetaDinero } : e))
     );
     return { success: true };
   };
@@ -177,6 +195,7 @@ export function useExecutives({ mes, anio }) {
     loading,
     error,
     updateMeta,
+    updateMetaDinero,
     updateTipo,
     copyFromPreviousMonth,
     toggleActivo,

@@ -39,7 +39,7 @@ export const STATUS_CONFIG = {
 export const PRODUCTOS = [
   "Crédito de nómina",
   "Arrendamiento de motos",
-  "Financiamiento de motos",
+  "Crédito de motos",
 ];
 
 export const ESTATUS_LIST = [
@@ -60,6 +60,15 @@ export const SUCURSALES = [
   "Campeche",
   "Quintana Roo",
   "Valladolid",
+];
+
+export const SUCURSALES_MOTOS = [
+  "Corporativo",
+  "Quintana Roo",
+  "Campeche",
+  "Valladolid",
+  "Kukulcán",
+  "Itzaes",
 ];
 
 export const CONVENIOS_PUBLICOS = [
