@@ -1138,7 +1138,7 @@ function ClientDetailModal({ client, onClose, fetchStatusHistory }) {
     return icons[status] || "•";
   };
 
-  const timeSince = getTimeSinceUpdate(client.estatus_updated_at);
+  const timeSince = getTimeSinceUpdate(client.estatus_updated_at || client.created_at);
 
   return (
     <div style={{
@@ -2586,7 +2586,7 @@ function TablaClientes({ perfil }) {
                         if (client.estatus === "Dispersión" || client.estatus === "Rechazado") {
                           return <span style={{ fontSize: 11, color: COLORS.textLight }}>—</span>;
                         }
-                        const ts = getTimeSinceUpdate(client.estatus_updated_at);
+                        const ts = getTimeSinceUpdate(client.estatus_updated_at || client.created_at);
                         return (
                           <span style={{
                             fontSize: 11, fontWeight: 700, color: ts.color,
@@ -6920,7 +6920,7 @@ function ExportExcel() {
 
         const sheetName = `${MESES[mes - 1]} ${anio}`;
         const rows = clients.map((c) => {
-          const ts = c.estatus === "Dispersión" || c.estatus === "Rechazado" ? null : getTimeSinceUpdate(c.estatus_updated_at);
+          const ts = c.estatus === "Dispersión" || c.estatus === "Rechazado" ? null : getTimeSinceUpdate(c.estatus_updated_at || c.created_at);
           return {
             Ejecutivo: c.ejecutivo,
             Cliente: c.nombre_cliente,

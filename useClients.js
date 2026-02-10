@@ -94,6 +94,7 @@ export function useClients({ mes, anio, ejecutivoId = null, ejecutivoNombre = nu
         mes_registro: mes,
         anio_registro: anio,
         fecha_inicio: clientData.fecha_inicio || new Date().toISOString().split("T")[0],
+        estatus_updated_at: new Date().toISOString(),
       })
       .select()
       .single();
