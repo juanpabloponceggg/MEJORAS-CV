@@ -36,6 +36,7 @@ function LoadingScreen() {
       justifyContent: "center",
       minHeight: "100vh",
       background: COLORS.bg,
+      fontFamily: "'Inter', -apple-system, sans-serif",
     }}>
       <div style={{ textAlign: "center" }}>
         <div style={{
@@ -47,7 +48,7 @@ function LoadingScreen() {
           margin: "0 auto 20px",
           animation: "spin 1s linear infinite",
         }} />
-        <h2 style={{ color: COLORS.text, marginBottom: 8 }}>Cargando...</h2>
+        <h2 style={{ color: COLORS.text, marginBottom: 8, fontWeight: 700 }}>Cargando...</h2>
         <p style={{ color: COLORS.textLight }}>Autenticando tu sesión</p>
       </div>
       <style>{`
@@ -154,9 +155,10 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
           width: "100%",
           maxWidth: 400,
           background: COLORS.card,
-          borderRadius: 12,
+          borderRadius: 16,
           padding: 40,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          boxShadow: COLORS.shadow,
+          fontFamily: "'Inter', -apple-system, sans-serif",
         }}>
           <h2 style={{ color: COLORS.text, marginBottom: 10, textAlign: "center" }}>
             Recuperar contraseña
@@ -170,7 +172,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
               background: COLORS.greenBg,
               color: COLORS.green,
               padding: 12,
-              borderRadius: 8,
+              borderRadius: 10,
               marginBottom: 20,
               fontSize: 14,
             }}>
@@ -190,7 +192,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
                   width: "100%",
                   padding: "12px 16px",
                   border: `1px solid ${COLORS.border}`,
-                  borderRadius: 8,
+                  borderRadius: 10,
                   fontSize: 14,
                   boxSizing: "border-box",
                   background: COLORS.inputBg,
@@ -207,8 +209,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
                 background: COLORS.primary,
                 color: "white",
                 border: "none",
-                borderRadius: 8,
-                fontWeight: 600,
+                borderRadius: 10, fontWeight: 600,
                 fontSize: 14,
                 cursor: resetLoading || resetSent ? "default" : "pointer",
                 opacity: resetLoading || resetSent ? 0.6 : 1,
@@ -257,9 +258,10 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
         width: "100%",
         maxWidth: 400,
         background: COLORS.card,
-        borderRadius: 12,
+        borderRadius: 16,
         padding: 40,
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+        boxShadow: COLORS.shadow,
+        fontFamily: "'Inter', -apple-system, sans-serif",
       }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{
@@ -289,7 +291,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
             background: COLORS.redBg,
             color: COLORS.red,
             padding: 12,
-            borderRadius: 8,
+            borderRadius: 10,
             marginBottom: 20,
             fontSize: 14,
           }}>
@@ -318,7 +320,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
                   width: "100%",
                   padding: "12px 16px 12px 44px",
                   border: `1px solid ${COLORS.border}`,
-                  borderRadius: 8,
+                  borderRadius: 10,
                   fontSize: 14,
                   boxSizing: "border-box",
                   background: COLORS.inputBg,
@@ -347,7 +349,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
                   width: "100%",
                   padding: "12px 16px 12px 44px",
                   border: `1px solid ${COLORS.border}`,
-                  borderRadius: 8,
+                  borderRadius: 10,
                   fontSize: 14,
                   boxSizing: "border-box",
                   background: COLORS.inputBg,
@@ -365,8 +367,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
               background: COLORS.primary,
               color: "white",
               border: "none",
-              borderRadius: 8,
-              fontWeight: 600,
+              borderRadius: 10, fontWeight: 600,
               fontSize: 14,
               cursor: loading ? "default" : "pointer",
               opacity: loading ? 0.7 : 1,
@@ -410,8 +411,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
               style={{
                 flex: 1, minWidth: 120, padding: "10px", fontSize: 12, fontWeight: 600,
                 color: "#F59E0B", background: "#FFFBEB",
-                border: "1px solid #F59E0B30", borderRadius: 8,
-                cursor: "pointer", fontFamily: "inherit",
+                border: "1px solid #F59E0B30", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
               }}
             >
               Admin Prueba
@@ -422,8 +422,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
               style={{
                 flex: 1, minWidth: 120, padding: "10px", fontSize: 12, fontWeight: 600,
                 color: COLORS.primary, background: COLORS.primaryLight,
-                border: `1px solid ${COLORS.primary}30`, borderRadius: 8,
-                cursor: "pointer", fontFamily: "inherit",
+                border: `1px solid ${COLORS.primary}30`, borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
               }}
             >
               Ejecutivo Nómina
@@ -434,8 +433,7 @@ function LoginScreen({ onLogin, authError, onResetPassword }) {
               style={{
                 flex: 1, minWidth: 120, padding: "10px", fontSize: 12, fontWeight: 600,
                 color: COLORS.moto, background: `${COLORS.moto}10`,
-                border: `1px solid ${COLORS.moto}30`, borderRadius: 8,
-                cursor: "pointer", fontFamily: "inherit",
+                border: `1px solid ${COLORS.moto}30`, borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
               }}
             >
               Ejecutivo Motos
@@ -611,14 +609,15 @@ function StatusBadge({ status }) {
   return (
     <span
       style={{
-        display: "inline-block",
-        padding: "4px 10px",
-        borderRadius: 20,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 4,
+        padding: "4px 12px",
+        borderRadius: 10,
         fontSize: 12,
-        fontWeight: 600,
+        fontWeight: 700,
         color: config.color,
         background: config.bg,
-        border: `1px solid ${config.color}30`,
         whiteSpace: "nowrap",
       }}
     >
@@ -634,14 +633,14 @@ function SelectDropdown({ value, onChange, options, placeholder, width }) {
       onChange={(e) => onChange(e.target.value)}
       style={{
         width: width || "100%",
-        padding: "8px 10px",
+        padding: "14px 16px",
         fontSize: 13,
         border: `1.5px solid ${COLORS.border}`,
-        borderRadius: 6,
+        borderRadius: 10,
         background: "#fff",
         color: COLORS.text,
         cursor: "pointer",
-        fontFamily: "inherit",
+        fontFamily: "'Inter', inherit",
         outline: "none",
       }}
     >
@@ -706,8 +705,7 @@ function SearchableConvenioDropdown({ value, onChange, tipoConvenio }) {
             onClick={() => { clearValue(); setIsOpen(true); }}
             style={{
               width: "100%", padding: "10px 36px 10px 32px", fontSize: 13, fontWeight: 600,
-              border: `1.5px solid ${COLORS.primary}`, borderRadius: 8,
-              background: COLORS.primaryLight, color: COLORS.text,
+              border: `1.5px solid ${COLORS.primary}`, borderRadius: 10, background: COLORS.primaryLight, color: COLORS.text,
               fontFamily: "inherit", cursor: "pointer", boxSizing: "border-box",
               whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
             }}
@@ -727,8 +725,7 @@ function SearchableConvenioDropdown({ value, onChange, tipoConvenio }) {
             placeholder="Buscar convenio..."
             style={{
               width: "100%", padding: "10px 12px 10px 32px", fontSize: 14,
-              border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-              background: "#fff", fontFamily: "inherit", outline: "none",
+              border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: "#fff", fontFamily: "inherit", outline: "none",
               boxSizing: "border-box",
             }}
           />
@@ -741,7 +738,7 @@ function SearchableConvenioDropdown({ value, onChange, tipoConvenio }) {
           maxHeight: 220, overflowY: "auto", zIndex: 100,
           boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
         }}>
-          <div style={{ padding: "8px 12px", fontSize: 11, color: COLORS.textLight, background: "#f9fafb", borderBottom: `1px solid ${COLORS.border}`, fontWeight: 600 }}>
+          <div style={{ padding: "8px 12px", fontSize: 11, color: COLORS.textLight, background: "#f9fafb", borderBottom: `1px solid #F1F5F9`, fontWeight: 600 }}>
             {filtered.length} de {convenios.length} convenios {tipoConvenio === "Público" ? "públicos" : "privados"}
           </div>
           {filtered.length === 0 ? (
@@ -752,7 +749,7 @@ function SearchableConvenioDropdown({ value, onChange, tipoConvenio }) {
                 key={c}
                 onClick={() => selectItem(c)}
                 style={{
-                  padding: "10px 12px", cursor: "pointer", fontSize: 13,
+                  padding: "14px 16px", cursor: "pointer", fontSize: 13,
                   borderBottom: `1px solid #f3f4f6`, transition: "background 0.15s",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = COLORS.primaryLight; }}
@@ -811,7 +808,7 @@ function NominaFields({ form, update, labelStyle, inputStyle }) {
                 style={{
                   flex: 1, padding: "9px 10px", fontSize: 13, fontWeight: 600,
                   border: `1.5px solid ${form.tipo_convenio === tipo ? (tipo === "Público" ? COLORS.blue : COLORS.purple) : COLORS.border}`,
-                  borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+                  borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
                   background: form.tipo_convenio === tipo ? (tipo === "Público" ? COLORS.blueBg : COLORS.purpleBg) : "#fff",
                   color: form.tipo_convenio === tipo ? (tipo === "Público" ? COLORS.blue : COLORS.purple) : COLORS.textLight,
                   transition: "all 0.2s",
@@ -840,14 +837,23 @@ function NominaFields({ form, update, labelStyle, inputStyle }) {
 
 function ProgressBar({ pct, color }) {
   const cappedPct = Math.min(pct, 100);
+  const gradientMap = {
+    [COLORS.green]: `linear-gradient(90deg, ${COLORS.primary}, #34D399)`,
+    [COLORS.primary]: `linear-gradient(90deg, ${COLORS.primary}, #34D399)`,
+    [COLORS.yellow]: `linear-gradient(90deg, ${COLORS.yellow}, #FBBF24)`,
+    [COLORS.red]: `linear-gradient(90deg, ${COLORS.red}, #F87171)`,
+    [COLORS.blue]: `linear-gradient(90deg, ${COLORS.blue}, #60A5FA)`,
+    [COLORS.moto]: `linear-gradient(90deg, ${COLORS.moto}, #FBBF24)`,
+  };
+  const bg = gradientMap[color] || color;
   return (
-    <div style={{ width: "100%", height: 10, background: "#F1F5F9", borderRadius: 10, overflow: "hidden", position: "relative" }}>
+    <div style={{ width: "100%", height: 12, background: "#F1F5F9", borderRadius: 6, overflow: "hidden", position: "relative" }}>
       <div
         style={{
           width: `${cappedPct}%`,
           height: "100%",
-          background: color,
-          borderRadius: 10,
+          background: bg,
+          borderRadius: 6,
           transition: "width 0.6s ease",
         }}
       />
@@ -913,11 +919,10 @@ function AddClientModal({ onAdd, onClose, ejecutivos = [] }) {
   const labelStyle = { display: "block", fontSize: 12, fontWeight: 600, color: COLORS.text, marginBottom: 4 };
   const inputStyle = {
     width: "100%",
-    padding: "10px 12px",
+    padding: "14px 16px",
     fontSize: 14,
     border: `1.5px solid ${COLORS.border}`,
-    borderRadius: 8,
-    background: "#fff",
+    borderRadius: 10, background: "#fff",
     color: COLORS.text,
     fontFamily: "inherit",
     outline: "none",
@@ -1077,22 +1082,35 @@ function AddClientModal({ onAdd, onClose, ejecutivos = [] }) {
   );
 }
 
-function KPICard({ label, value, sub, color }) {
+function KPICard({ label, value, sub, color, icon }) {
   return (
     <div
       style={{
         background: "#fff",
-        borderRadius: 12,
-        padding: "16px 18px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+        borderRadius: 16,
+        padding: 20,
+        boxShadow: COLORS.shadow,
         border: `1px solid ${COLORS.border}`,
         minWidth: 140,
         flex: "1 1 140px",
+        position: "relative",
+        overflow: "hidden",
+        borderTop: `3px solid ${color || COLORS.primary}`,
       }}
     >
-      <p style={{ fontSize: 11, color: COLORS.textLight, margin: "0 0 4px", fontWeight: 500, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</p>
-      <p style={{ fontSize: 24, fontWeight: 800, color: color || COLORS.dark, margin: 0 }}>{value}</p>
-      {sub && <p style={{ fontSize: 11, color: COLORS.textLight, margin: "4px 0 0" }}>{sub}</p>}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <p style={{ fontSize: 12, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>{label}</p>
+        {icon && (
+          <div style={{
+            width: 36, height: 36, borderRadius: 10,
+            background: `${color || COLORS.primary}15`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 18,
+          }}>{icon}</div>
+        )}
+      </div>
+      <p style={{ fontSize: 28, fontWeight: 800, color: color || COLORS.dark, margin: 0, letterSpacing: "-0.5px", lineHeight: 1 }}>{value}</p>
+      {sub && <p style={{ fontSize: 12, color: COLORS.textLight, margin: "8px 0 0", fontWeight: 600 }}>{sub}</p>}
     </div>
   );
 }
@@ -1226,7 +1244,7 @@ function ClientDetailModal({ client, onClose, fetchStatusHistory }) {
 
                   {/* Card */}
                   <div style={{
-                    background: "#fff", padding: "10px 14px", borderRadius: 10,
+                    background: "#fff", padding: "14px 16px", borderRadius: 10,
                     border: `1px solid ${COLORS.border}`,
                   }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: 8 }}>
@@ -1267,7 +1285,7 @@ function ClientDetailModal({ client, onClose, fetchStatusHistory }) {
           <button onClick={onClose} style={{
             padding: "10px 24px", fontSize: 13, fontWeight: 600,
             border: `1.5px solid ${COLORS.border}`, background: "#fff",
-            borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+            borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
           }}>
             Cerrar
           </button>
@@ -1479,17 +1497,17 @@ function DashboardAdmin() {
   const periodoLabel = modo === "mensual" ? `${MESES[mes - 1]} ${anio}` : modo === "acumulado" ? `Acumulado ${anio}` : "Todo el historial";
 
   return (
-    <div style={{ minHeight: "100vh", background: COLORS.bg, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+    <div style={{ minHeight: "100vh", background: COLORS.bg, fontFamily: "'Inter', -apple-system, sans-serif" }}>
       <div style={{ padding: isMobile ? "16px 12px" : "20px 24px", maxWidth: 1400, margin: "0 auto" }}>
 
         {/* ─── HEADER: Título + selector de periodo ─── */}
         <div style={{
-          background: "#fff", borderRadius: 14, padding: isMobile ? "14px 16px" : "18px 24px", marginBottom: 18,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: "#fff", borderRadius: 16, padding: isMobile ? "14px 16px" : "18px 24px", marginBottom: 18,
+          boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
             <div>
-              <h1 style={{ fontSize: isMobile ? 20 : 24, fontWeight: 800, color: COLORS.dark, margin: 0 }}>
+              <h1 style={{ fontSize: isMobile ? 20 : 24, fontWeight: 800, color: COLORS.dark, margin: 0, letterSpacing: "-0.5px" }}>
                 📊 Dashboard Ejecutivo
               </h1>
               <p style={{ fontSize: 13, color: COLORS.textLight, margin: "4px 0 0" }}>{periodoLabel}</p>
@@ -1498,10 +1516,10 @@ function DashboardAdmin() {
               {/* Selector de modo */}
               {["mensual", "acumulado", "historial"].map((m) => (
                 <button key={m} onClick={() => setModo(m)} style={{
-                  padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer",
-                  border: modo === m ? `2px solid ${COLORS.primary}` : `1px solid ${COLORS.border}`,
-                  background: modo === m ? COLORS.primaryLight : "#fff",
-                  color: modo === m ? COLORS.primaryDark : COLORS.textLight,
+                  padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                  border: `1px solid ${COLORS.border}`,
+                  background: modo === m ? COLORS.dark : "#fff",
+                  color: modo === m ? "#fff" : COLORS.textLight,
                   textTransform: "capitalize",
                 }}>
                   {m === "mensual" ? "Mensual" : m === "acumulado" ? "Año acumulado" : "Historial"}
@@ -1510,7 +1528,7 @@ function DashboardAdmin() {
               {/* Selector de mes (solo modo mensual) */}
               {modo === "mensual" && (
                 <select value={mes} onChange={(e) => setMes(Number(e.target.value))} style={{
-                  padding: "6px 10px", borderRadius: 8, border: `1px solid ${COLORS.border}`,
+                  padding: "6px 10px", borderRadius: 10, border: `1px solid ${COLORS.border}`,
                   fontSize: 12, fontWeight: 600, color: COLORS.text, background: "#fff", cursor: "pointer",
                 }}>
                   {MESES.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
@@ -1519,7 +1537,7 @@ function DashboardAdmin() {
               {/* Selector de año (mensual o acumulado) */}
               {modo !== "historial" && (
                 <select value={anio} onChange={(e) => setAnio(Number(e.target.value))} style={{
-                  padding: "6px 10px", borderRadius: 8, border: `1px solid ${COLORS.border}`,
+                  padding: "6px 10px", borderRadius: 10, border: `1px solid ${COLORS.border}`,
                   fontSize: 12, fontWeight: 600, color: COLORS.text, background: "#fff", cursor: "pointer",
                 }}>
                   {aniosDisponibles.map((y) => <option key={y} value={y}>{y}</option>)}
@@ -1533,9 +1551,9 @@ function DashboardAdmin() {
         <div style={{ display: "flex", gap: 14, marginBottom: 18, flexWrap: "wrap" }}>
           {highlights.mejorEjecutivo && (
             <div style={{
-              flex: 1, minWidth: isMobile ? "100%" : 200, padding: "14px 18px", borderRadius: 12,
-              background: "linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)",
-              border: `1px solid ${COLORS.green}33`,
+              flex: 1, minWidth: isMobile ? "100%" : 200, padding: "14px 18px", borderRadius: 16,
+              background: "linear-gradient(135deg, #ECFDF5, #F0FDF4)",
+              border: "1px solid #A7F3D0",
             }}>
               <p style={{ fontSize: 10, fontWeight: 700, color: COLORS.green, margin: 0, textTransform: "uppercase" }}>🏆 Mejor ejecutivo</p>
               <p style={{ fontSize: 18, fontWeight: 800, color: COLORS.dark, margin: "4px 0 2px" }}>{highlights.mejorEjecutivo.nombre}</p>
@@ -1544,9 +1562,9 @@ function DashboardAdmin() {
           )}
           {highlights.mejorMes && (
             <div style={{
-              flex: 1, minWidth: isMobile ? "100%" : 200, padding: "14px 18px", borderRadius: 12,
-              background: "linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)",
-              border: `1px solid ${COLORS.blue}33`,
+              flex: 1, minWidth: isMobile ? "100%" : 200, padding: "14px 18px", borderRadius: 16,
+              background: "linear-gradient(135deg, #EFF6FF, #F5F3FF)",
+              border: "1px solid #BFDBFE",
             }}>
               <p style={{ fontSize: 10, fontWeight: 700, color: COLORS.blue, margin: 0, textTransform: "uppercase" }}>📅 Mejor mes</p>
               <p style={{ fontSize: 18, fontWeight: 800, color: COLORS.dark, margin: "4px 0 2px" }}>{highlights.mejorMes.label} {highlights.mejorMes.anio !== anio ? highlights.mejorMes.anio : ""}</p>
@@ -1555,9 +1573,9 @@ function DashboardAdmin() {
           )}
           {highlights.mejorProducto && (
             <div style={{
-              flex: 1, minWidth: isMobile ? "100%" : 200, padding: "14px 18px", borderRadius: 12,
-              background: "linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)",
-              border: `1px solid ${COLORS.purple}33`,
+              flex: 1, minWidth: isMobile ? "100%" : 200, padding: "14px 18px", borderRadius: 16,
+              background: "linear-gradient(135deg, #FFFBEB, #FFF7ED)",
+              border: "1px solid #FDE68A",
             }}>
               <p style={{ fontSize: 10, fontWeight: 700, color: COLORS.purple, margin: 0, textTransform: "uppercase" }}>🎯 Producto top</p>
               <p style={{ fontSize: 18, fontWeight: 800, color: COLORS.dark, margin: "4px 0 2px" }}>{highlights.mejorProducto.nombre}</p>
@@ -1575,11 +1593,11 @@ function DashboardAdmin() {
             { icon: "📊", label: "Tasa de conversión", value: `${finance.tasaConversion.toFixed(1)}%`, color: finance.tasaConversion >= 50 ? COLORS.green : finance.tasaConversion >= 25 ? COLORS.yellow : COLORS.red, sub: `${finance.totalDisp} de ${finance.totalClientes} clientes` },
           ].map((kpi, i) => (
             <div key={i} style={{
-              background: "#fff", borderRadius: 12, padding: isMobile ? "12px 14px" : "16px 20px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+              background: "#fff", borderRadius: 16, padding: isMobile ? "12px 14px" : "16px 20px",
+              boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
               borderLeft: `4px solid ${kpi.color}`,
             }}>
-              <p style={{ fontSize: 10, fontWeight: 700, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>
                 {kpi.icon} {kpi.label}
               </p>
               <p style={{ fontSize: isMobile ? 18 : 22, fontWeight: 800, color: COLORS.dark, margin: "6px 0 2px" }}>{kpi.value}</p>
@@ -1597,11 +1615,11 @@ function DashboardAdmin() {
             { icon: "🧾", label: "Ticket promedio", value: formatMoney(Math.round(finance.ticketPromedio)), color: COLORS.purple, sub: `${finance.totalDisp} operaciones totales` },
           ].map((kpi, i) => (
             <div key={i} style={{
-              background: "#fff", borderRadius: 12, padding: isMobile ? "12px 14px" : "16px 20px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+              background: "#fff", borderRadius: 16, padding: isMobile ? "12px 14px" : "16px 20px",
+              boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
               borderLeft: `4px solid ${kpi.color}`,
             }}>
-              <p style={{ fontSize: 10, fontWeight: 700, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>
                 {kpi.icon} {kpi.label}
               </p>
               <p style={{ fontSize: isMobile ? 18 : 22, fontWeight: 800, color: COLORS.dark, margin: "6px 0 2px" }}>{kpi.value}</p>
@@ -1613,8 +1631,9 @@ function DashboardAdmin() {
         {/* ─── BARRA DE CUMPLIMIENTO ─── */}
         {finance.presupuesto > 0 && (
           <div style={{
-            background: "#fff", borderRadius: 14, padding: isMobile ? "14px 16px" : "18px 24px", marginBottom: 18,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+            background: COLORS.card,
+            borderRadius: 16, padding: isMobile ? "14px 16px" : "18px 24px", marginBottom: 18,
+            boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: COLORS.dark, margin: 0 }}>Cumplimiento de presupuesto</h3>
@@ -1625,18 +1644,18 @@ function DashboardAdmin() {
                 {finance.pctCumplimiento.toFixed(1)}%
               </span>
             </div>
-            <div style={{ width: "100%", height: 14, background: "#E2E8F0", borderRadius: 7, overflow: "hidden", position: "relative" }}>
+            <div style={{ width: "100%", height: 12, background: "#F1F5F9", borderRadius: 6, overflow: "hidden", position: "relative" }}>
               <div style={{
                 width: `${Math.min(finance.pctCumplimiento, 100)}%`, height: "100%",
                 background: finance.pctCumplimiento >= 100 ? `linear-gradient(90deg, ${COLORS.green}, #34D399)` : finance.pctCumplimiento >= 70 ? `linear-gradient(90deg, ${COLORS.yellow}, #FCD34D)` : `linear-gradient(90deg, ${COLORS.red}, #FCA5A5)`,
-                borderRadius: 7, transition: "width 0.6s ease",
+                borderRadius: 6, transition: "width 0.6s ease",
               }} />
               {/* Marca de proyección */}
               {modo === "mensual" && finance.proyeccion > 0 && finance.presupuesto > 0 && (
                 <div style={{
                   position: "absolute", top: -2, bottom: -2,
                   left: `${Math.min((finance.proyeccion / finance.presupuesto) * 100, 100)}%`,
-                  width: 3, background: COLORS.dark, borderRadius: 2, opacity: 0.5,
+                  width: 2, background: COLORS.dark, borderRadius: 1, opacity: 0.8,
                 }} title={`Proyección: ${formatMoney(Math.round(finance.proyeccion))}`} />
               )}
             </div>
@@ -1650,8 +1669,8 @@ function DashboardAdmin() {
 
         {/* ─── GRÁFICA DE INGRESOS POR MES ─── */}
         <div style={{
-          background: "linear-gradient(135deg, #ffffff 0%, #F8FAF8 100%)", borderRadius: 18, padding: isMobile ? "16px 14px" : "24px 28px", marginBottom: 18,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.06)", border: `1px solid ${COLORS.border}`,
+          background: "#fff", borderRadius: 16, padding: isMobile ? "16px 14px" : "24px 28px", marginBottom: 18,
+          boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
             <h3 style={{ fontSize: 16, fontWeight: 800, color: COLORS.dark, margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
@@ -1706,14 +1725,13 @@ function DashboardAdmin() {
                             position: "absolute", bottom: 40, width: "75%",
                             height: hPres, background: `linear-gradient(180deg, ${COLORS.blue}12, ${COLORS.blue}06)`,
                             border: `1.5px dashed ${COLORS.blue}35`,
-                            borderRadius: 8,
+                            borderRadius: 10,
                           }} />
                         )}
                         {/* Barra de ingresos */}
                         <div style={{
-                          width: isMobile ? "65%" : "55%", height: Math.max(hIngreso, 3), borderRadius: 8,
-                          background: esMesActual
-                            ? `linear-gradient(180deg, #22C55E, ${COLORS.primaryDark})`
+                          width: isMobile ? "65%" : "55%", height: Math.max(hIngreso, 3), borderRadius: 10, background: esMesActual
+                            ? `linear-gradient(180deg, #10B981, #34D399)`
                             : cumplioMeta
                               ? `linear-gradient(180deg, #34D399, ${COLORS.green})`
                               : `linear-gradient(180deg, ${COLORS.primary}DD, ${COLORS.primary})`,
@@ -1781,8 +1799,9 @@ function DashboardAdmin() {
           const maxAcum = Math.max(...acumuladoData.map((m) => m.acumulado), 1);
           return (
             <div style={{
-              background: "#fff", borderRadius: 14, padding: isMobile ? "14px 16px" : "18px 24px", marginBottom: 18,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+              background: COLORS.card,
+            borderRadius: 16, padding: isMobile ? "14px 16px" : "18px 24px", marginBottom: 18,
+              boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
             }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: COLORS.dark, margin: "0 0 16px" }}>📊 Ingresos acumulados</h3>
               <div style={{ display: "flex", alignItems: "flex-end", gap: isMobile ? 2 : 6, height: 140, padding: "0 0 30px", position: "relative" }}>
@@ -1813,8 +1832,9 @@ function DashboardAdmin() {
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 18, marginBottom: 18 }}>
           {/* Productos */}
           <div style={{
-            background: "#fff", borderRadius: 14, padding: isMobile ? "14px 16px" : "18px 24px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+            background: COLORS.card,
+            borderRadius: 16, padding: isMobile ? "14px 16px" : "18px 24px",
+            boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
           }}>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: COLORS.dark, margin: "0 0 14px" }}>🎯 Desglose por producto</h3>
             {productoBreakdown.length === 0 ? (
@@ -1841,8 +1861,9 @@ function DashboardAdmin() {
 
           {/* Métricas rápidas */}
           <div style={{
-            background: "#fff", borderRadius: 14, padding: isMobile ? "14px 16px" : "18px 24px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+            background: COLORS.card,
+            borderRadius: 16, padding: isMobile ? "14px 16px" : "18px 24px",
+            boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
           }}>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: COLORS.dark, margin: "0 0 14px" }}>⚡ Métricas rápidas</h3>
             {[
@@ -1858,7 +1879,7 @@ function DashboardAdmin() {
             ].map((item, i) => (
               <div key={i} style={{
                 display: "flex", justifyContent: "space-between", alignItems: "center",
-                padding: "8px 0", borderBottom: `1px solid ${COLORS.border}`,
+                padding: "8px 0", borderBottom: `1px solid #F1F5F9`,
               }}>
                 <span style={{ fontSize: 12, color: COLORS.textLight }}>{item.icon} {item.label}</span>
                 <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.dark }}>{item.value}</span>
@@ -1869,22 +1890,23 @@ function DashboardAdmin() {
 
         {/* ─── RANKING DE EJECUTIVOS ─── */}
         <div style={{
-          background: "#fff", borderRadius: 14, padding: isMobile ? "14px 16px" : "18px 24px", marginBottom: 18,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: COLORS.card,
+            borderRadius: 16, padding: isMobile ? "14px 16px" : "18px 24px", marginBottom: 18,
+          boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
         }}>
           <h3 style={{ fontSize: 14, fontWeight: 700, color: COLORS.dark, margin: "0 0 14px" }}>🏆 Ranking de ejecutivos — {periodoLabel}</h3>
           {ranking.length === 0 ? (
             <p style={{ color: COLORS.textLight, fontSize: 13, textAlign: "center", padding: 20 }}>Sin datos de ejecutivos para este periodo</p>
           ) : (
-            <div style={{ overflowX: "auto" }}>
+            <div style={{ overflowX: "auto", borderRadius: 16, overflow: "hidden" }}>
               <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0 4px" }}>
                 <thead>
                   <tr>
                     {["#", "Ejecutivo", "Ingresos", "Nómina", "Motos", "Clientes", "Ticket prom.", "% del total"].map((h) => (
                       <th key={h} style={{
-                        padding: "10px 12px", textAlign: h === "#" ? "center" : "left",
-                        fontSize: 10, fontWeight: 700, color: COLORS.textLight,
-                        textTransform: "uppercase", borderBottom: `2px solid ${COLORS.border}`,
+                        padding: "14px 16px", textAlign: h === "#" ? "center" : "left",
+                        fontSize: 11, fontWeight: 700, color: COLORS.textLight,
+                        textTransform: "uppercase", letterSpacing: "0.5px", background: "#F8FAFC", borderBottom: `2px solid ${COLORS.border}`,
                       }}>{h}</th>
                     ))}
                   </tr>
@@ -1896,18 +1918,18 @@ function DashboardAdmin() {
                     return (
                       <tr key={ej.nombre} style={{
                         background: i === 0 ? COLORS.greenBg : i % 2 === 0 ? "#FAFBFA" : "#fff",
-                        borderRadius: 8,
+                        borderRadius: 10,
                       }}>
-                        <td style={{ padding: "10px 12px", textAlign: "center", fontSize: 16 }}>
+                        <td style={{ padding: "14px 16px", textAlign: "center", fontSize: 16 }}>
                           {i < 3 ? medals[i] : <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.textLight }}>{i + 1}</span>}
                         </td>
-                        <td style={{ padding: "10px 12px", fontWeight: 700, color: COLORS.dark, fontSize: 13 }}>{ej.nombre}</td>
-                        <td style={{ padding: "10px 12px", fontWeight: 800, color: COLORS.primary, fontSize: 13 }}>{formatMoney(Math.round(ej.monto))}</td>
-                        <td style={{ padding: "10px 12px", fontSize: 12, color: COLORS.text }}>{formatMoney(Math.round(ej.nomina))}</td>
-                        <td style={{ padding: "10px 12px", fontSize: 12, color: COLORS.moto }}>{formatMoney(Math.round(ej.motos))}</td>
-                        <td style={{ padding: "10px 12px", fontSize: 13, fontWeight: 600, color: COLORS.text, textAlign: "center" }}>{ej.clientes}</td>
-                        <td style={{ padding: "10px 12px", fontSize: 12, color: COLORS.text }}>{formatMoney(Math.round(ej.clientes > 0 ? ej.monto / ej.clientes : 0))}</td>
-                        <td style={{ padding: "10px 12px" }}>
+                        <td style={{ padding: "14px 16px", fontWeight: 700, color: COLORS.dark, fontSize: 13 }}>{ej.nombre}</td>
+                        <td style={{ padding: "14px 16px", fontWeight: 800, color: COLORS.primary, fontSize: 13 }}>{formatMoney(Math.round(ej.monto))}</td>
+                        <td style={{ padding: "14px 16px", fontSize: 13, color: COLORS.text }}>{formatMoney(Math.round(ej.nomina))}</td>
+                        <td style={{ padding: "14px 16px", fontSize: 13, color: COLORS.moto }}>{formatMoney(Math.round(ej.motos))}</td>
+                        <td style={{ padding: "14px 16px", fontSize: 13, fontWeight: 600, color: COLORS.text, textAlign: "center" }}>{ej.clientes}</td>
+                        <td style={{ padding: "14px 16px", fontSize: 13, color: COLORS.text }}>{formatMoney(Math.round(ej.clientes > 0 ? ej.monto / ej.clientes : 0))}</td>
+                        <td style={{ padding: "14px 16px" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                             <div style={{ flex: 1, height: 6, background: "#E2E8F0", borderRadius: 3, overflow: "hidden" }}>
                               <div style={{ width: `${pctTotal}%`, height: "100%", background: COLORS.primary, borderRadius: 3 }} />
@@ -2095,7 +2117,7 @@ function TablaClientes({ perfil }) {
               value={client[field]}
               onChange={(e) => handleUpdateClient(client.id, field, e.target.value)}
               onBlur={() => setEditingCell(null)}
-              style={{ padding: "4px 6px", fontSize: 12, borderRadius: 6, border: `1.5px solid ${COLORS.primary}`, outline: "none", fontFamily: "inherit" }}
+              style={{ padding: "8px 10px", fontSize: 12, borderRadius: 10, border: `1.5px solid ${COLORS.primary}`, outline: "none", fontFamily: "inherit" }}
             >
               {ESTATUS_LIST.map((s) => (<option key={s} value={s}>{s}</option>))}
             </select>
@@ -2115,7 +2137,7 @@ function TablaClientes({ perfil }) {
               value={client[field]}
               onChange={(e) => handleUpdateClient(client.id, field, e.target.value)}
               onBlur={() => setEditingCell(null)}
-              style={{ padding: "4px 6px", fontSize: 12, borderRadius: 6, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit" }}
+              style={{ padding: "8px 10px", fontSize: 12, borderRadius: 10, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit" }}
             >
               {ejecutivosList.map((s) => (<option key={s} value={s}>{s}</option>))}
             </select>
@@ -2135,7 +2157,7 @@ function TablaClientes({ perfil }) {
               value={client[field]}
               onChange={(e) => handleUpdateClient(client.id, field, e.target.value)}
               onBlur={() => setEditingCell(null)}
-              style={{ padding: "4px 6px", fontSize: 12, borderRadius: 6, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit" }}
+              style={{ padding: "8px 10px", fontSize: 12, borderRadius: 10, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit" }}
             >
               {PRODUCTOS.map((s) => (<option key={s} value={s}>{s}</option>))}
             </select>
@@ -2158,7 +2180,7 @@ function TablaClientes({ perfil }) {
               value={client[field] || ""}
               onChange={(e) => handleUpdateClient(client.id, field, e.target.value)}
               onBlur={() => setEditingCell(null)}
-              style={{ padding: "4px 6px", fontSize: 12, borderRadius: 6, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit" }}
+              style={{ padding: "8px 10px", fontSize: 12, borderRadius: 10, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit" }}
             >
               <option value="">— Sin sucursal —</option>
               {opciones.map((s) => (<option key={s} value={s}>{s}</option>))}
@@ -2181,7 +2203,7 @@ function TablaClientes({ perfil }) {
               value={client[field] || ""}
               onChange={(e) => handleUpdateClient(client.id, field, e.target.value)}
               onBlur={() => setEditingCell(null)}
-              style={{ padding: "4px 6px", fontSize: 11, borderRadius: 6, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit", maxWidth: 220 }}
+              style={{ padding: "4px 6px", fontSize: 11, borderRadius: 10, border: `1.5px solid ${COLORS.primary}`, outline: "none", width: "100%", fontFamily: "inherit", maxWidth: 220 }}
             >
               <option value="">— Sin convenio —</option>
               <optgroup label="Públicos">
@@ -2214,10 +2236,9 @@ function TablaClientes({ perfil }) {
               if (e.key === "Enter") handleUpdateClient(client.id, field, type === "number" ? Number(e.target.value) : e.target.value);
             }}
             style={{
-              padding: "4px 6px",
+              padding: "8px 10px",
               fontSize: 13,
-              borderRadius: 6,
-              border: `1.5px solid ${COLORS.primary}`,
+              borderRadius: 10, border: `1.5px solid ${COLORS.primary}`,
               outline: "none",
               width: "100%",
               fontFamily: "inherit",
@@ -2243,8 +2264,9 @@ function TablaClientes({ perfil }) {
     >
       <div style={{ padding: "20px 24px", maxWidth: 1400, margin: "0 auto" }}>
         <div style={{
-          background: "#fff", borderRadius: 14, padding: "16px 22px", marginBottom: 18,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: COLORS.card,
+            borderRadius: 16, padding: "16px 22px", marginBottom: 18,
+          boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
           display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -2255,7 +2277,7 @@ function TablaClientes({ perfil }) {
               }}
               style={{
                 width: 36, height: 36, borderRadius: "50%", border: `1.5px solid ${COLORS.border}`,
-                background: "#fff", cursor: "pointer", fontSize: 16, color: COLORS.textLight,
+                background: COLORS.card, cursor: "pointer", fontSize: 16, color: COLORS.textLight,
                 display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "inherit",
               }}
             >
@@ -2289,7 +2311,7 @@ function TablaClientes({ perfil }) {
               }}
               style={{
                 width: 36, height: 36, borderRadius: "50%", border: `1.5px solid ${COLORS.border}`,
-                background: "#fff", cursor: "pointer", fontSize: 16, color: COLORS.textLight,
+                background: COLORS.card, cursor: "pointer", fontSize: 16, color: COLORS.textLight,
                 display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "inherit",
               }}
             >
@@ -2303,7 +2325,7 @@ function TablaClientes({ perfil }) {
               <>
                 {/* Barra de progreso ingresos vs presupuesto */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", letterSpacing: 0.5 }}>
                     Ingresos vs Presupuesto
                   </span>
                   <span style={{
@@ -2336,8 +2358,7 @@ function TablaClientes({ perfil }) {
                     const proyBg = pctProy >= 100 ? COLORS.greenBg : pctProy >= 70 ? COLORS.yellowBg : COLORS.redBg;
                     return (
                       <div style={{
-                        flex: 1, minWidth: 120, padding: "6px 10px", borderRadius: 8,
-                        background: proyBg,
+                        flex: 1, minWidth: 120, padding: "6px 10px", borderRadius: 10, background: proyBg,
                         border: `1px solid ${proyColor}22`,
                       }}>
                         <p style={{ fontSize: 9, fontWeight: 700, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>📈 Proyección cierre</p>
@@ -2359,8 +2380,7 @@ function TablaClientes({ perfil }) {
 
                   {/* Falta por vender */}
                   <div style={{
-                    flex: 1, minWidth: 120, padding: "6px 10px", borderRadius: 8,
-                    background: budgetData.falta === 0 ? COLORS.greenBg : COLORS.orangeBg,
+                    flex: 1, minWidth: 120, padding: "6px 10px", borderRadius: 10, background: budgetData.falta === 0 ? COLORS.greenBg : COLORS.orangeBg,
                     border: `1px solid ${budgetData.falta === 0 ? COLORS.green : COLORS.orange}22`,
                   }}>
                     <p style={{ fontSize: 9, fontWeight: 700, color: COLORS.textLight, margin: 0, textTransform: "uppercase" }}>🔻 Falta por vender</p>
@@ -2380,7 +2400,7 @@ function TablaClientes({ perfil }) {
               </>
             ) : (
               <div style={{
-                padding: "10px 14px", borderRadius: 8, background: COLORS.orangeBg,
+                padding: "14px 16px", borderRadius: 10, background: COLORS.orangeBg,
                 border: `1px solid ${COLORS.orange}22`, textAlign: "center",
               }}>
                 <p style={{ fontSize: 11, color: COLORS.orange, fontWeight: 600, margin: 0 }}>
@@ -2403,16 +2423,16 @@ function TablaClientes({ perfil }) {
 
         <div
           style={{
-            background: "#fff",
-            borderRadius: 14,
+            background: COLORS.card,
+            borderRadius: 16,
             padding: "16px 20px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+            boxShadow: COLORS.shadow,
             border: `1px solid ${COLORS.border}`,
             marginBottom: 16,
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: COLORS.dark, margin: 0 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 800, color: COLORS.dark, letterSpacing: "-0.5px", margin: 0 }}>
               Seguimiento de Clientes
             </h2>
             <button
@@ -2444,10 +2464,10 @@ function TablaClientes({ perfil }) {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               style={{
-                padding: "8px 12px",
+                padding: "10px 16px",
                 fontSize: 13,
                 border: `1.5px solid ${COLORS.border}`,
-                borderRadius: 8,
+                borderRadius: 10,
                 outline: "none",
                 minWidth: 180,
                 flex: "1 1 180px",
@@ -2462,14 +2482,13 @@ function TablaClientes({ perfil }) {
               <button
                 onClick={() => { setFilterEjecutivo(""); setFilterProducto(""); setFilterEstatus(""); setSearchText(""); }}
                 style={{
-                  padding: "8px 14px",
+                  padding: "10px 14px",
                   fontSize: 12,
                   fontWeight: 600,
                   color: COLORS.red,
                   background: "#FEF2F2",
                   border: `1px solid ${COLORS.red}30`,
-                  borderRadius: 8,
-                  cursor: "pointer",
+                  borderRadius: 10, cursor: "pointer",
                   fontFamily: "inherit",
                 }}
               >
@@ -2481,29 +2500,29 @@ function TablaClientes({ perfil }) {
 
         <div
           style={{
-            background: "#fff",
-            borderRadius: 14,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+            background: COLORS.card,
+            borderRadius: 16,
+            boxShadow: COLORS.shadow,
             border: `1px solid ${COLORS.border}`,
             overflowX: "auto",
           }}
         >
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
             <thead>
-              <tr style={{ background: COLORS.dark }}>
+              <tr style={{ background: "#F8FAFC" }}>
                 {["Ejecutivo", "Cliente", "Producto", "Monto", "Sucursal", "Convenio", "Fecha inicio", "Estatus", "Sin actualizar", "Actualización", "Fecha final", ""].map((h) => (
                   <th
                     key={h}
                     style={{
-                      padding: "12px 14px",
-                      fontSize: 12,
+                      padding: "12px 16px",
+                      fontSize: 11,
                       fontWeight: 700,
-                      color: "#fff",
+                      color: COLORS.textLight,
                       textAlign: "left",
                       textTransform: "uppercase",
                       letterSpacing: 0.5,
                       whiteSpace: "nowrap",
-                      borderBottom: `3px solid ${COLORS.primary}`,
+                      borderBottom: `2px solid ${COLORS.border}`,
                     }}
                   >
                     {h}
@@ -2523,17 +2542,17 @@ function TablaClientes({ perfil }) {
                   <tr
                     key={client.id}
                     style={{
-                      background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
-                      borderBottom: `1px solid ${COLORS.border}`,
+                      background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                      borderBottom: `1px solid #F1F5F9`,
                       transition: "background 0.15s",
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = `${COLORS.primary}08`)}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = idx % 2 === 0 ? "#fff" : "#FAFBFA")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = idx % 2 === 0 ? "#fff" : "#F8FAFB")}
                   >
-                    <td style={{ padding: "10px 14px", maxWidth: 160 }}>
+                    <td style={{ padding: "14px 16px", fontSize: 13, maxWidth: 160 }}>
                       <EditableCell client={client} field="ejecutivo" />
                     </td>
-                    <td style={{ padding: "10px 14px", fontWeight: 600, fontSize: 13 }}>
+                    <td style={{ padding: "14px 16px", fontWeight: 600, fontSize: 13 }}>
                       <span
                         onClick={() => setSelectedClient(client)}
                         style={{ color: COLORS.primary, cursor: "pointer", textDecoration: "underline", textDecorationColor: `${COLORS.primary}40` }}
@@ -2542,25 +2561,25 @@ function TablaClientes({ perfil }) {
                         {client.nombre_cliente}
                       </span>
                     </td>
-                    <td style={{ padding: "10px 14px", maxWidth: 160 }}>
+                    <td style={{ padding: "14px 16px", fontSize: 13, maxWidth: 160 }}>
                       <EditableCell client={client} field="producto" />
                     </td>
-                    <td style={{ padding: "10px 14px", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
+                    <td style={{ padding: "14px 16px", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                       <EditableCell client={client} field="monto" type="number" />
                     </td>
-                    <td style={{ padding: "10px 14px", fontSize: 12, maxWidth: 120 }}>
+                    <td style={{ padding: "14px 16px", fontSize: 13, maxWidth: 120 }}>
                       <EditableCell client={client} field="sucursal" />
                     </td>
-                    <td style={{ padding: "10px 14px", fontSize: 12, maxWidth: 220 }}>
+                    <td style={{ padding: "14px 16px", fontSize: 13, maxWidth: 220 }}>
                       <EditableCell client={client} field="convenio" />
                     </td>
-                    <td style={{ padding: "10px 14px" }}>
+                    <td style={{ padding: "14px 16px" }}>
                       <EditableCell client={client} field="fecha_inicio" type="date" />
                     </td>
-                    <td style={{ padding: "10px 14px" }}>
+                    <td style={{ padding: "14px 16px" }}>
                       <EditableCell client={client} field="estatus" />
                     </td>
-                    <td style={{ padding: "10px 14px", textAlign: "center" }}>
+                    <td style={{ padding: "14px 16px", textAlign: "center" }}>
                       {(() => {
                         if (client.estatus === "Dispersión" || client.estatus === "Rechazado") {
                           return <span style={{ fontSize: 11, color: COLORS.textLight }}>—</span>;
@@ -2577,13 +2596,13 @@ function TablaClientes({ perfil }) {
                         );
                       })()}
                     </td>
-                    <td style={{ padding: "10px 14px", maxWidth: 200, fontSize: 12, color: COLORS.textLight }}>
+                    <td style={{ padding: "14px 16px", fontSize: 13, maxWidth: 200, fontSize: 12, color: COLORS.textLight }}>
                       <EditableCell client={client} field="actualizacion" />
                     </td>
-                    <td style={{ padding: "10px 14px" }}>
+                    <td style={{ padding: "14px 16px" }}>
                       <EditableCell client={client} field="fecha_final" type="date" />
                     </td>
-                    <td style={{ padding: "10px 8px", textAlign: "center" }}>
+                    <td style={{ padding: "14px 16px", textAlign: "center" }}>
                       <button
                         onClick={() => setDeleteConfirm(client)}
                         title="Eliminar cliente"
@@ -2634,8 +2653,8 @@ function TablaClientes({ perfil }) {
           display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999,
         }}>
           <div style={{
-            background: "#fff", borderRadius: 16, padding: "28px 32px", maxWidth: 420,
-            width: "90%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+            background: COLORS.card, borderRadius: 16, padding: "28px 32px", maxWidth: 420,
+            width: "90%", boxShadow: COLORS.shadow,
           }}>
             <h3 style={{ fontSize: 17, fontWeight: 800, color: COLORS.dark, margin: "0 0 8px" }}>
               ¿Eliminar cliente?
@@ -2650,7 +2669,7 @@ function TablaClientes({ perfil }) {
               <button
                 onClick={() => setDeleteConfirm(null)}
                 style={{
-                  padding: "10px 20px", borderRadius: 8, border: `1.5px solid ${COLORS.border}`,
+                  padding: "10px 20px", borderRadius: 10, border: `1.5px solid ${COLORS.border}`,
                   background: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer",
                   color: COLORS.textLight, fontFamily: "inherit",
                 }}
@@ -2663,7 +2682,7 @@ function TablaClientes({ perfil }) {
                   setDeleteConfirm(null);
                 }}
                 style={{
-                  padding: "10px 20px", borderRadius: 8, border: "none",
+                  padding: "10px 20px", borderRadius: 10, border: "none",
                   background: COLORS.red, color: "#fff", fontSize: 13, fontWeight: 700,
                   cursor: "pointer", fontFamily: "inherit",
                 }}
@@ -2689,15 +2708,15 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
       display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999,
     }}>
       <div style={{
-        background: "#fff", borderRadius: 16, padding: "28px 32px", maxWidth: 420,
-        width: "90%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+        background: COLORS.card, borderRadius: 16, padding: "28px 32px", maxWidth: 420,
+            width: "90%", boxShadow: COLORS.shadow,
       }}>
         <p style={{ fontSize: 15, color: COLORS.text, margin: "0 0 20px", lineHeight: 1.5 }}>{message}</p>
         <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
           <button
             onClick={onCancel}
             style={{
-              padding: "10px 20px", borderRadius: 8, border: `1.5px solid ${COLORS.border}`,
+              padding: "10px 20px", borderRadius: 10, border: `1.5px solid ${COLORS.border}`,
               background: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", color: COLORS.textLight,
             }}
           >
@@ -2706,7 +2725,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
           <button
             onClick={onConfirm}
             style={{
-              padding: "10px 20px", borderRadius: 8, border: "none",
+              padding: "10px 20px", borderRadius: 10, border: "none",
               background: COLORS.red, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer",
             }}
           >
@@ -2784,11 +2803,10 @@ function CreateUserModal({ onClose, onCreate, existingEmails }) {
 
   const inputStyle = {
     width: "100%",
-    padding: "10px 14px",
+    padding: "14px 16px",
     fontSize: 14,
     border: `1.5px solid ${COLORS.border}`,
-    borderRadius: 8,
-    background: "#F8FAF8",
+    borderRadius: 10, background: "#F8FAF8",
     fontFamily: "inherit",
     outline: "none",
     boxSizing: "border-box",
@@ -2824,7 +2842,7 @@ function CreateUserModal({ onClose, onCreate, existingEmails }) {
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 20 }}>👤</span>
+            <span style={{ fontSize: 24 }}>👤</span>
             <h3 style={{ color: "#fff", fontSize: 16, fontWeight: 700, margin: 0 }}>Crear nueva cuenta</h3>
           </div>
           <button onClick={onClose} style={{
@@ -3229,7 +3247,7 @@ function GestionUsuarios() {
                 background: "#fff",
                 borderRadius: 12,
                 padding: "14px 18px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                boxShadow: COLORS.shadow,
                 border: `1px solid ${COLORS.border}`,
                 flex: "1 1 140px",
                 minWidth: 120,
@@ -3261,7 +3279,7 @@ function GestionUsuarios() {
             borderRadius: 12,
             padding: "14px 18px",
             marginBottom: 16,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+            boxShadow: COLORS.shadow,
             border: `1px solid ${COLORS.border}`,
             display: "flex",
             gap: 14,
@@ -3276,11 +3294,10 @@ function GestionUsuarios() {
               placeholder="Buscar por nombre o email..."
               style={{
                 width: "100%",
-                padding: "10px 14px",
+                padding: "14px 16px",
                 fontSize: 13,
                 border: `1.5px solid ${COLORS.border}`,
-                borderRadius: 8,
-                background: "#F8FAF8",
+                borderRadius: 10, background: "#F8FAF8",
                 fontFamily: "inherit",
                 outline: "none",
                 boxSizing: "border-box",
@@ -3294,8 +3311,7 @@ function GestionUsuarios() {
                 onClick={() => setFilterRol(r)}
                 style={{
                   padding: "8px 16px",
-                  borderRadius: 8,
-                  border: `1.5px solid ${filterRol === r ? COLORS.primary : COLORS.border}`,
+                  borderRadius: 10, border: `1.5px solid ${filterRol === r ? COLORS.primary : COLORS.border}`,
                   background: filterRol === r ? COLORS.primaryLight : "#fff",
                   color: filterRol === r ? COLORS.primaryDark : COLORS.textLight,
                   fontSize: 12,
@@ -3315,8 +3331,7 @@ function GestionUsuarios() {
                 onClick={() => setFilterEstado(e)}
                 style={{
                   padding: "8px 16px",
-                  borderRadius: 8,
-                  border: `1.5px solid ${filterEstado === e ? COLORS.primary : COLORS.border}`,
+                  borderRadius: 10, border: `1.5px solid ${filterEstado === e ? COLORS.primary : COLORS.border}`,
                   background: filterEstado === e ? COLORS.primaryLight : "#fff",
                   color: filterEstado === e ? COLORS.primaryDark : COLORS.textLight,
                   fontSize: 12,
@@ -3333,16 +3348,16 @@ function GestionUsuarios() {
 
         <div
           style={{
-            background: "#fff",
-            borderRadius: 14,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+            background: COLORS.card,
+            borderRadius: 16,
+            boxShadow: COLORS.shadow,
             border: `1px solid ${COLORS.border}`,
             overflowX: "auto",
           }}
         >
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 750 }}>
             <thead>
-              <tr style={{ background: COLORS.dark }}>
+              <tr style={{ background: "#F8FAFC" }}>
                 {["Usuario", "Rol", "Nivel", "Ejecutivo asignado", "Estado", "Fecha registro", "Acciones"].map(
                   (h) => (
                     <th
@@ -3351,12 +3366,13 @@ function GestionUsuarios() {
                         padding: "12px 14px",
                         fontSize: 11,
                         fontWeight: 700,
-                        color: "#fff",
+                        color: COLORS.textLight,
                         textAlign: "left",
                         textTransform: "uppercase",
                         letterSpacing: 0.5,
                         whiteSpace: "nowrap",
-                        borderBottom: `3px solid ${COLORS.primary}`,
+                        borderBottom: `2px solid ${COLORS.border}`,
+                        background: "#F8FAFC",
                       }}
                     >
                       {h}
@@ -3381,8 +3397,8 @@ function GestionUsuarios() {
                     <tr
                       key={user.user_id}
                       style={{
-                        background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
-                        borderBottom: `1px solid ${COLORS.border}`,
+                        background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                        borderBottom: `1px solid #F1F5F9`,
                         opacity: user.activo ? 1 : 0.6,
                       }}
                     >
@@ -3501,7 +3517,7 @@ function GestionUsuarios() {
                             title={user.activo ? "Desactivar" : "Reactivar"}
                             style={{
                               padding: "6px 10px",
-                              borderRadius: 6,
+                              borderRadius: 10,
                               border: `1px solid ${COLORS.border}`,
                               background: "#fff",
                               fontSize: 11,
@@ -3517,7 +3533,7 @@ function GestionUsuarios() {
                             title="Cambiar rol"
                             style={{
                               padding: "6px 10px",
-                              borderRadius: 6,
+                              borderRadius: 10,
                               border: `1px solid ${COLORS.border}`,
                               background: "#fff",
                               fontSize: 11,
@@ -3533,7 +3549,7 @@ function GestionUsuarios() {
                             title="Resetear contraseña"
                             style={{
                               padding: "6px 10px",
-                              borderRadius: 6,
+                              borderRadius: 10,
                               border: `1px solid ${COLORS.border}`,
                               background: "#fff",
                               fontSize: 11,
@@ -3626,15 +3642,15 @@ function GestionUsuarios() {
 function KPICardNomina({ label, value, sub, color, icon }) {
   return (
     <div style={{
-      background: "#fff", borderRadius: 12, padding: "18px 20px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+      background: "#fff", borderRadius: 16, padding: 20,
+      boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
       flex: "1 1 200px", minWidth: 180,
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
         <span style={{ fontSize: 18 }}>{icon}</span>
         <p style={{ fontSize: 11, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</p>
       </div>
-      <p style={{ fontSize: 26, fontWeight: 800, color: color || COLORS.dark, margin: 0 }}>{value}</p>
+      <p style={{ fontSize: 28, fontWeight: 800, color: color || COLORS.dark, margin: 0, letterSpacing: "-0.5px" }}>{value}</p>
       {sub && <p style={{ fontSize: 11, color: COLORS.textLight, margin: "4px 0 0" }}>{sub}</p>}
     </div>
   );
@@ -3718,7 +3734,7 @@ function ResumenNomina() {
     }}>
       <div style={{ padding: "20px 24px", maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ marginBottom: 20 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: COLORS.dark, margin: "0 0 4px" }}>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: COLORS.dark, margin: "0 0 4px", letterSpacing: "-0.5px" }}>
             Resumen de Ejecutivos — Crédito de Nómina
           </h1>
           <p style={{ fontSize: 13, color: COLORS.textLight, margin: 0 }}>
@@ -3727,15 +3743,15 @@ function ResumenNomina() {
         </div>
 
         <div style={{
-          background: "#fff", borderRadius: 14, padding: "18px 22px", marginBottom: 18,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: COLORS.card,
+            borderRadius: 16, padding: "18px 22px", marginBottom: 18,
+          boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
           display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-end",
         }}>
           <div>
             <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: COLORS.textLight, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Mes</label>
             <select value={mes} onChange={(e) => setMes(Number(e.target.value))} style={{
-              padding: "10px 14px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-              background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none", minWidth: 140,
+              padding: "14px 16px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none", minWidth: 140,
             }}>
               {MESES.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
             </select>
@@ -3743,8 +3759,7 @@ function ResumenNomina() {
           <div>
             <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: COLORS.textLight, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Año</label>
             <select value={anio} onChange={(e) => setAnio(Number(e.target.value))} style={{
-              padding: "10px 14px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-              background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none",
+              padding: "14px 16px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none",
             }}>
               {[2025, 2026, 2027, 2028].map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
@@ -3752,8 +3767,7 @@ function ResumenNomina() {
           <div>
             <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: COLORS.textLight, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Día actual</label>
             <input type="number" min={1} max={diasMes} value={diaActual} onChange={(e) => setDiaActual(Math.min(Number(e.target.value), diasMes))} style={{
-              padding: "10px 14px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-              background: "#fff", fontFamily: "inherit", fontWeight: 600, outline: "none", width: 70,
+              padding: "14px 16px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: "#fff", fontFamily: "inherit", fontWeight: 600, outline: "none", width: 70,
             }} />
           </div>
 
@@ -3787,18 +3801,19 @@ function ResumenNomina() {
         </div>
 
         <div style={{
-          background: "#fff", borderRadius: 14,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: COLORS.card,
+            borderRadius: 16,
+          boxShadow: COLORS.shadow,border: `1px solid ${COLORS.border}`,
           overflowX: "auto",
         }}>
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1000 }}>
             <thead>
-              <tr style={{ background: COLORS.dark }}>
+              <tr style={{ background: "#F8FAFC" }}>
                 {["Ejecutivo", "Meta mensual", "Real (Dispersión)", "Clientes", "Ticket prom.", "% Avance", "Barra de progreso", "Proyección", "Falta"].map((h) => (
                   <th key={h} style={{
                     padding: "12px 16px", fontSize: 12, fontWeight: 700, color: "#fff",
                     textAlign: "left", textTransform: "uppercase", letterSpacing: 0.5,
-                    whiteSpace: "nowrap", borderBottom: `3px solid ${COLORS.primary}`,
+                    whiteSpace: "nowrap", borderBottom: `2px solid ${COLORS.border}`,
                   }}>{h}</th>
                 ))}
               </tr>
@@ -3808,8 +3823,8 @@ function ResumenNomina() {
                 const pc = pctColor(ej.avance);
                 return (
                   <tr key={idx} style={{
-                    background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
-                    borderBottom: `1px solid ${COLORS.border}`,
+                    background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                    borderBottom: `1px solid #F1F5F9`,
                   }}>
                     <td style={{ padding: "14px 16px" }}>
                       <p style={{ fontSize: 13, fontWeight: 600, color: COLORS.text, margin: 0 }}>
@@ -3867,7 +3882,7 @@ function ResumenNomina() {
                 );
               })}
 
-              <tr style={{ background: COLORS.dark }}>
+              <tr style={{ background: "#F8FAFC" }}>
                 <td style={{ padding: "14px 16px", fontWeight: 800, fontSize: 14, color: "#fff" }}>
                   TOTAL EQUIPO
                 </td>
@@ -3923,9 +3938,10 @@ function ResumenNomina() {
             const pc = pctColor(ej.avance);
             return (
               <div key={idx} style={{
-                background: "#fff", borderRadius: 14, padding: "18px 20px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
-                borderLeft: `4px solid ${pc.color}`,
+                background: COLORS.card,
+            borderRadius: 16, padding: 20,
+                boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
+                borderTop: `3px solid ${pc.color}`,
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                   <div>
@@ -3945,7 +3961,7 @@ function ResumenNomina() {
                 {/* Proyección */}
                 {ej.meta > 0 && (
                   <div style={{
-                    marginTop: 10, padding: "8px 12px", borderRadius: 8, textAlign: "center",
+                    marginTop: 10, padding: "8px 12px", borderRadius: 10, textAlign: "center",
                     background: (ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.greenBg : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellowBg : COLORS.redBg,
                   }}>
                     <p style={{ fontSize: 9, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proyección al cierre</p>
@@ -4033,8 +4049,9 @@ function ResumenNomina() {
 
               {rankingConvenios.length === 0 ? (
                 <div style={{
-                  background: "#fff", borderRadius: 14,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                  background: COLORS.card,
+            borderRadius: 16,
+                  boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
                   padding: "40px 20px", textAlign: "center",
                 }}>
                   <p style={{ fontSize: 40, margin: "0 0 12px" }}>📋</p>
@@ -4047,18 +4064,18 @@ function ResumenNomina() {
                 </div>
               ) : (
               <div style={{
-                background: "#fff", borderRadius: 14,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                background: "#fff", borderRadius: 16,
+                boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
                 overflowX: "auto",
               }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
                   <thead>
-                    <tr style={{ background: COLORS.dark }}>
+                    <tr style={{ background: "#F8FAFC" }}>
                       {["#", "Convenio", "Tipo", "Clientes", "Dispersados", "En pipeline", "Rechazados", "Monto dispersado", "% del total", "Tasa cierre"].map((h) => (
                         <th key={h} style={{
-                          padding: "12px 14px", fontSize: 11, fontWeight: 700, color: "#fff",
+                          padding: "12px 14px", fontSize: 11, fontWeight: 700, color: COLORS.textLight,
                           textAlign: h === "#" ? "center" : "left", textTransform: "uppercase", letterSpacing: 0.5,
-                          whiteSpace: "nowrap", borderBottom: `3px solid ${COLORS.primary}`,
+                          whiteSpace: "nowrap", borderBottom: `2px solid ${COLORS.border}`,
                         }}>{h}</th>
                       ))}
                     </tr>
@@ -4070,8 +4087,8 @@ function ResumenNomina() {
                       const tc = pctColor(tasaCierre);
                       return (
                         <tr key={conv.nombre} style={{
-                          background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
-                          borderBottom: `1px solid ${COLORS.border}`,
+                          background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                          borderBottom: `1px solid #F1F5F9`,
                         }}>
                           <td style={{ padding: "12px 14px", textAlign: "center" }}>
                             <span style={{
@@ -4131,7 +4148,7 @@ function ResumenNomina() {
                     })}
 
                     {/* Fila total */}
-                    <tr style={{ background: COLORS.dark }}>
+                    <tr style={{ background: "#F8FAFC" }}>
                       <td style={{ padding: "12px 14px" }} />
                       <td style={{ padding: "12px 14px", fontWeight: 800, fontSize: 13, color: "#fff" }}>TOTAL</td>
                       <td style={{ padding: "12px 14px" }} />
@@ -4209,8 +4226,9 @@ function ResumenNomina() {
 
               {rankingSucNom.length === 0 ? (
                 <div style={{
-                  background: "#fff", borderRadius: 14,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                  background: COLORS.card,
+            borderRadius: 16,
+                  boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
                   padding: "40px 20px", textAlign: "center",
                 }}>
                   <p style={{ fontSize: 40, margin: "0 0 12px" }}>🏢</p>
@@ -4223,18 +4241,18 @@ function ResumenNomina() {
                 </div>
               ) : (
                 <div style={{
-                  background: "#fff", borderRadius: 14,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                  background: "#fff", borderRadius: 16,
+                  boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
                   overflowX: "auto",
                 }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
                     <thead>
-                      <tr style={{ background: COLORS.dark }}>
+                      <tr style={{ background: "#F8FAFC" }}>
                         {["#", "Sucursal", "Clientes", "Dispersados", "En pipeline", "Rechazados", "Monto dispersado", "% del total", "Tasa cierre"].map((h) => (
                           <th key={h} style={{
-                            padding: "12px 14px", fontSize: 11, fontWeight: 700, color: "#fff",
+                            padding: "12px 14px", fontSize: 11, fontWeight: 700, color: COLORS.textLight,
                             textAlign: h === "#" ? "center" : "left", textTransform: "uppercase", letterSpacing: 0.5,
-                            whiteSpace: "nowrap", borderBottom: `3px solid ${COLORS.primary}`,
+                            whiteSpace: "nowrap", borderBottom: `2px solid ${COLORS.border}`,
                           }}>{h}</th>
                         ))}
                       </tr>
@@ -4246,8 +4264,8 @@ function ResumenNomina() {
                         const tc = pctColor(tasaCierre);
                         return (
                           <tr key={suc.nombre} style={{
-                            background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
-                            borderBottom: `1px solid ${COLORS.border}`,
+                            background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                            borderBottom: `1px solid #F1F5F9`,
                           }}>
                             <td style={{ padding: "12px 14px", textAlign: "center" }}>
                               <span style={{
@@ -4296,7 +4314,7 @@ function ResumenNomina() {
                           </tr>
                         );
                       })}
-                      <tr style={{ background: COLORS.dark }}>
+                      <tr style={{ background: "#F8FAFC" }}>
                         <td style={{ padding: "12px 14px" }} />
                         <td style={{ padding: "12px 14px", fontWeight: 800, fontSize: 13, color: "#fff" }}>TOTAL</td>
                         <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: "#fff", textAlign: "center" }}>{nominaClientsConSuc.length}</td>
@@ -4337,15 +4355,15 @@ function ResumenNomina() {
 function KPICardMotos({ label, value, sub, color, icon }) {
   return (
     <div style={{
-      background: "#fff", borderRadius: 12, padding: "18px 20px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+      background: "#fff", borderRadius: 16, padding: 20,
+      boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
       flex: "1 1 180px", minWidth: 160,
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
         <span style={{ fontSize: 18 }}>{icon}</span>
         <p style={{ fontSize: 11, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</p>
       </div>
-      <p style={{ fontSize: 28, fontWeight: 800, color: color || COLORS.dark, margin: 0 }}>{value}</p>
+      <p style={{ fontSize: 28, fontWeight: 800, color: color || COLORS.dark, margin: 0, letterSpacing: "-0.5px" }}>{value}</p>
       {sub && <p style={{ fontSize: 11, color: COLORS.textLight, margin: "4px 0 0" }}>{sub}</p>}
     </div>
   );
@@ -4359,11 +4377,11 @@ function UnitDots({ real, meta }) {
       <div
         key={i}
         style={{
-          width: 16,
-          height: 16,
+          width: 22,
+          height: 22,
           borderRadius: "50%",
           background: i < real ? COLORS.primary : "#E2E8F0",
-          border: i < meta && i >= real ? `2px dashed ${COLORS.textLight}` : "2px solid transparent",
+          border: i < meta && i >= real ? `2px dashed #FCD34D` : i < real ? "2px solid transparent" : "2px dashed #E2E8F0",
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
@@ -4477,7 +4495,7 @@ function ResumenMotos() {
     }}>
       <div style={{ padding: "20px 24px", maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ marginBottom: 20 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: COLORS.dark, margin: "0 0 4px" }}>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: COLORS.dark, margin: "0 0 4px", letterSpacing: "-0.5px" }}>
             Resumen de Ejecutivos — Crédito y Arrendamiento de Motos
           </h1>
           <p style={{ fontSize: 13, color: COLORS.textLight, margin: 0 }}>
@@ -4486,15 +4504,15 @@ function ResumenMotos() {
         </div>
 
         <div style={{
-          background: "#fff", borderRadius: 14, padding: "18px 22px", marginBottom: 18,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: COLORS.card,
+            borderRadius: 16, padding: "18px 22px", marginBottom: 18,
+          boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
           display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-end",
         }}>
           <div>
             <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: COLORS.textLight, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Mes</label>
             <select value={mes} onChange={(e) => setMes(Number(e.target.value))} style={{
-              padding: "10px 14px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-              background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none", minWidth: 140,
+              padding: "14px 16px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none", minWidth: 140,
             }}>
               {MESES.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
             </select>
@@ -4502,8 +4520,7 @@ function ResumenMotos() {
           <div>
             <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: COLORS.textLight, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Año</label>
             <select value={anio} onChange={(e) => setAnio(Number(e.target.value))} style={{
-              padding: "10px 14px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-              background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none",
+              padding: "14px 16px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none",
             }}>
               {[2025, 2026, 2027, 2028].map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
@@ -4511,8 +4528,7 @@ function ResumenMotos() {
           <div>
             <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: COLORS.textLight, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Día actual</label>
             <input type="number" min={1} max={diasMes} value={diaActual} onChange={(e) => setDiaActual(Math.min(Number(e.target.value), diasMes))} style={{
-              padding: "10px 14px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-              background: "#fff", fontFamily: "inherit", fontWeight: 600, outline: "none", width: 70,
+              padding: "14px 16px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: "#fff", fontFamily: "inherit", fontWeight: 600, outline: "none", width: 70,
             }} />
           </div>
           <div style={{ display: "flex", gap: 20, marginLeft: "auto", flexWrap: "wrap" }}>
@@ -4557,13 +4573,14 @@ function ResumenMotos() {
         </div>
 
         <div style={{
-          background: "#fff", borderRadius: 14,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: COLORS.card,
+            borderRadius: 16,
+          boxShadow: COLORS.shadow,border: `1px solid ${COLORS.border}`,
           overflowX: "auto",
         }}>
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1050 }}>
             <thead>
-              <tr style={{ background: COLORS.dark }}>
+              <tr style={{ background: "#F8FAFC" }}>
                 {["Ejecutivo", "Meta (uds)", "Real (uds)", "Arrend.", "Crédito", "Monto vendido", "Ticket prom.", "Meta ($)", "% Avance", "Progreso", "Proy. (uds)", "Proy. ($)", "Falta"].map((h) => (
                   <th key={h} style={{
                     padding: "12px 14px", fontSize: 11, fontWeight: 700, color: "#fff",
@@ -4578,8 +4595,8 @@ function ResumenMotos() {
                 const pc = pctColor(ej.avance);
                 return (
                   <tr key={idx} style={{
-                    background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
-                    borderBottom: `1px solid ${COLORS.border}`,
+                    background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                    borderBottom: `1px solid #F1F5F9`,
                   }}>
                     <td style={{ padding: "14px", maxWidth: 180 }}>
                       <p style={{ fontSize: 13, fontWeight: 600, color: COLORS.text, margin: 0 }}>
@@ -4588,7 +4605,7 @@ function ResumenMotos() {
                     </td>
                     <td style={{ padding: "14px", textAlign: "center" }}>
                       <span style={{
-                        display: "inline-block", padding: "4px 14px", borderRadius: 8,
+                        display: "inline-block", padding: "4px 14px", borderRadius: 10,
                         fontSize: 15, fontWeight: 700, color: COLORS.text, background: "#F1F5F9",
                       }}>
                         {ej.meta}
@@ -4596,7 +4613,7 @@ function ResumenMotos() {
                     </td>
                     <td style={{ padding: "14px", textAlign: "center" }}>
                       <span style={{
-                        display: "inline-block", padding: "4px 14px", borderRadius: 8,
+                        display: "inline-block", padding: "4px 14px", borderRadius: 10,
                         fontSize: 18, fontWeight: 800, color: COLORS.primary, background: COLORS.primaryLight,
                       }}>
                         {ej.real}
@@ -4666,7 +4683,7 @@ function ResumenMotos() {
                 );
               })}
 
-              <tr style={{ background: COLORS.dark }}>
+              <tr style={{ background: "#F8FAFC" }}>
                 <td style={{ padding: "14px", fontWeight: 800, fontSize: 14, color: "#fff" }}>TOTAL EQUIPO</td>
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 700, fontSize: 16, color: "#fff" }}>{totals.meta}</td>
                 <td style={{ padding: "14px", textAlign: "center", fontWeight: 800, fontSize: 18, color: COLORS.primary }}>{totals.real}</td>
@@ -4730,9 +4747,10 @@ function ResumenMotos() {
             const pc = pctColor(ej.avance);
             return (
               <div key={idx} style={{
-                background: "#fff", borderRadius: 14, padding: "20px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
-                borderLeft: `4px solid ${pc.color}`,
+                background: COLORS.card,
+            borderRadius: 16, padding: 20,
+                boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
+                borderTop: `3px solid ${pc.color}`,
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
                   <div>
@@ -4759,10 +4777,10 @@ function ResumenMotos() {
                 {/* Monto vendido */}
                 <div style={{
                   background: `linear-gradient(135deg, ${COLORS.primaryLight}, #fff)`,
-                  borderRadius: 10, padding: "10px 14px", marginBottom: 14, textAlign: "center",
+                  borderRadius: 10, padding: "14px 16px", marginBottom: 14, textAlign: "center",
                 }}>
                   <p style={{ fontSize: 10, color: COLORS.textLight, margin: "0 0 2px", fontWeight: 600, textTransform: "uppercase" }}>Monto vendido</p>
-                  <p style={{ fontSize: 20, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{formatMoney(Math.round(ej.montoTotal))}</p>
+                  <p style={{ fontSize: 18, fontWeight: 800, color: COLORS.primary, margin: 0 }}>{formatMoney(Math.round(ej.montoTotal))}</p>
                   {ej.metaDinero > 0 && (
                     <p style={{ fontSize: 10, color: ej.avanceDinero >= 80 ? COLORS.green : ej.avanceDinero >= 50 ? COLORS.yellow : COLORS.red, margin: "2px 0 0", fontWeight: 700 }}>
                       {ej.avanceDinero.toFixed(0)}% de meta ({formatMoney(Math.round(ej.metaDinero))})
@@ -4776,11 +4794,11 @@ function ResumenMotos() {
                 {/* Proyecciones */}
                 <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
                   <div style={{
-                    flex: 1, padding: "8px 10px", borderRadius: 8, textAlign: "center",
+                    flex: 1, padding: "14px 16px", borderRadius: 10, textAlign: "center",
                     background: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.greenBg : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellowBg : COLORS.redBg) : "#F1F5F9",
                   }}>
-                    <p style={{ fontSize: 9, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proy. uds</p>
-                    <p style={{ fontSize: 16, fontWeight: 800, margin: "2px 0 0", color: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
+                    <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proy. uds</p>
+                    <p style={{ fontSize: 18, fontWeight: 800, margin: "2px 0 0", color: ej.meta > 0 ? ((ej.proyeccion / ej.meta) * 100 >= 100 ? COLORS.green : (ej.proyeccion / ej.meta) * 100 >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
                       {Math.round(ej.proyeccion)} uds
                     </p>
                     {ej.meta > 0 && (
@@ -4790,11 +4808,11 @@ function ResumenMotos() {
                     )}
                   </div>
                   <div style={{
-                    flex: 1, padding: "8px 10px", borderRadius: 8, textAlign: "center",
+                    flex: 1, padding: "14px 16px", borderRadius: 10, textAlign: "center",
                     background: ej.metaDinero > 0 ? (ej.pctProyDinero >= 100 ? COLORS.greenBg : ej.pctProyDinero >= 70 ? COLORS.yellowBg : COLORS.redBg) : "#F1F5F9",
                   }}>
-                    <p style={{ fontSize: 9, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proy. dinero</p>
-                    <p style={{ fontSize: 16, fontWeight: 800, margin: "2px 0 0", color: ej.metaDinero > 0 ? (ej.pctProyDinero >= 100 ? COLORS.green : ej.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
+                    <p style={{ fontSize: 10, color: COLORS.textLight, margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Proy. dinero</p>
+                    <p style={{ fontSize: 18, fontWeight: 800, margin: "2px 0 0", color: ej.metaDinero > 0 ? (ej.pctProyDinero >= 100 ? COLORS.green : ej.pctProyDinero >= 70 ? COLORS.yellow : COLORS.red) : COLORS.text }}>
                       {formatMoney(Math.round(ej.proyeccionDinero))}
                     </p>
                     {ej.metaDinero > 0 && (
@@ -4887,8 +4905,8 @@ function ResumenMotos() {
 
               {rankingSucursales.length === 0 ? (
                 <div style={{
-                  background: "#fff", borderRadius: 14,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                  background: "#fff", borderRadius: 16,
+                  boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
                   padding: "40px 20px", textAlign: "center",
                 }}>
                   <p style={{ fontSize: 40, margin: "0 0 12px" }}>🏢</p>
@@ -4901,16 +4919,16 @@ function ResumenMotos() {
                 </div>
               ) : (
                 <div style={{
-                  background: "#fff", borderRadius: 14,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+                  background: "#fff", borderRadius: 16,
+                  boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
                   overflowX: "auto",
                 }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
                     <thead>
-                      <tr style={{ background: COLORS.dark }}>
+                      <tr style={{ background: "#F8FAFC" }}>
                         {["#", "Sucursal", "Clientes", "Dispersados", "En pipeline", "Rechazados", "Monto dispersado", "% del total", "Tasa cierre"].map((h) => (
                           <th key={h} style={{
-                            padding: "12px 14px", fontSize: 11, fontWeight: 700, color: "#fff",
+                            padding: "12px 14px", fontSize: 11, fontWeight: 700, color: COLORS.textLight,
                             textAlign: h === "#" ? "center" : "left", textTransform: "uppercase", letterSpacing: 0.5,
                             whiteSpace: "nowrap", borderBottom: `3px solid ${COLORS.moto}`,
                           }}>{h}</th>
@@ -4924,8 +4942,8 @@ function ResumenMotos() {
                         const tc = pctColor(tasaCierre);
                         return (
                           <tr key={suc.nombre} style={{
-                            background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
-                            borderBottom: `1px solid ${COLORS.border}`,
+                            background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                            borderBottom: `1px solid #F1F5F9`,
                           }}>
                             <td style={{ padding: "12px 14px", textAlign: "center" }}>
                               <span style={{
@@ -4974,7 +4992,7 @@ function ResumenMotos() {
                           </tr>
                         );
                       })}
-                      <tr style={{ background: COLORS.dark }}>
+                      <tr style={{ background: "#F8FAFC" }}>
                         <td style={{ padding: "12px 14px" }} />
                         <td style={{ padding: "12px 14px", fontWeight: 800, fontSize: 13, color: "#fff" }}>TOTAL</td>
                         <td style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, color: "#fff", textAlign: "center" }}>{motosClients.length}</td>
@@ -5088,7 +5106,7 @@ function GestionConvenios() {
   };
 
   const labelStyle = { display: "block", fontSize: 12, fontWeight: 600, color: COLORS.text, marginBottom: 4 };
-  const inputStyle = { width: "100%", padding: "10px 12px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 8, fontFamily: "inherit", outline: "none", boxSizing: "border-box" };
+  const inputStyle = { width: "100%", padding: "14px 16px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 10, fontFamily: "inherit", outline: "none", boxSizing: "border-box" };
 
   return (
     <div style={{ padding: isMobile ? "16px 12px" : "28px 32px", maxWidth: 1000, margin: "0 auto" }}>
@@ -5137,14 +5155,15 @@ function GestionConvenios() {
       {loading ? (
         <div style={{ textAlign: "center", padding: 40 }}><p>Cargando convenios...</p></div>
       ) : (
-        <div style={{ background: "#fff", borderRadius: 14, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+        <div style={{ background: COLORS.card,
+            borderRadius: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#f9fafb" }}>
-                <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", borderBottom: `2px solid ${COLORS.border}` }}>#</th>
-                <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", borderBottom: `2px solid ${COLORS.border}` }}>Nombre del Convenio</th>
-                <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", borderBottom: `2px solid ${COLORS.border}` }}>Tipo</th>
-                <th style={{ padding: "12px 16px", textAlign: "center", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", borderBottom: `2px solid ${COLORS.border}` }}>Acciones</th>
+                <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", letterSpacing: "0.5px", background: "#F8FAFC", borderBottom: `2px solid ${COLORS.border}` }}>#</th>
+                <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", letterSpacing: "0.5px", background: "#F8FAFC", borderBottom: `2px solid ${COLORS.border}` }}>Nombre del Convenio</th>
+                <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", letterSpacing: "0.5px", background: "#F8FAFC", borderBottom: `2px solid ${COLORS.border}` }}>Tipo</th>
+                <th style={{ padding: "12px 16px", textAlign: "center", fontSize: 11, fontWeight: 700, color: COLORS.textLight, textTransform: "uppercase", letterSpacing: "0.5px", background: "#F8FAFC", borderBottom: `2px solid ${COLORS.border}` }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -5179,7 +5198,7 @@ function GestionConvenios() {
       {showAddModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 16 }}>
           <div style={{ background: "#fff", borderRadius: 16, padding: "28px 24px", maxWidth: 480, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
-            <h3 style={{ fontSize: 18, fontWeight: 700, color: COLORS.dark, margin: "0 0 20px" }}>
+            <h3 style={{ fontSize: 24, fontWeight: 800, color: COLORS.dark, letterSpacing: "-0.5px", margin: "0 0 20px" }}>
               {editingConvenio ? "✏️ Editar Convenio" : "➕ Agregar Convenio"}
             </h3>
             <div style={{ display: "grid", gap: 14 }}>
@@ -5198,7 +5217,7 @@ function GestionConvenios() {
                       style={{
                         flex: 1, padding: "10px", fontSize: 13, fontWeight: 600,
                         border: `1.5px solid ${formTipo === t ? (t === "publico" ? COLORS.blue : COLORS.purple) : COLORS.border}`,
-                        borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+                        borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
                         background: formTipo === t ? (t === "publico" ? COLORS.blueBg : COLORS.purpleBg) : "#fff",
                         color: formTipo === t ? (t === "publico" ? COLORS.blue : COLORS.purple) : COLORS.textLight,
                       }}
@@ -5293,7 +5312,7 @@ function Sidebar({ activeScreen, onNavigate, onLogout, perfil, mobileOpen, onClo
         />
       )}
       <div style={{
-        width: isMobile ? 260 : 240,
+        width: 260,
         height: "100vh",
         background: COLORS.dark,
         position: "fixed",
@@ -5301,30 +5320,37 @@ function Sidebar({ activeScreen, onNavigate, onLogout, perfil, mobileOpen, onClo
         top: 0,
         display: "flex",
         flexDirection: "column",
-        borderRight: `1px solid ${COLORS.darkMid}`,
+        borderRight: `1px solid rgba(255,255,255,0.08)`,
         zIndex: 9999,
         transition: "transform 0.3s ease",
       }}>
-        {/* Header con botón cerrar en móvil */}
+        {/* Logo Section */}
         <div style={{
-          padding: isMobile ? "16px 16px" : "24px 20px",
-          borderBottom: `1px solid ${COLORS.darkMid}`,
+          padding: "20px 12px",
+          borderBottom: `1px solid rgba(255,255,255,0.08)`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{
-              width: 32, height: 32, borderRadius: "50%",
-              border: `2px solid ${COLORS.primary}`,
+              width: 40, height: 40, borderRadius: 12,
+              background: COLORS.primary,
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 18,
+              fontSize: 20,
+              fontWeight: 700,
+              color: "white",
             }}>
               ✓
             </div>
-            <h2 style={{ margin: 0, color: "white", fontSize: 18, fontWeight: 700 }}>
-              Credivive
-            </h2>
+            <div>
+              <h2 style={{ margin: 0, color: "white", fontSize: 20, fontWeight: 800, letterSpacing: "-0.5px" }}>
+                Credivive
+              </h2>
+              <p style={{ margin: "4px 0 0 0", color: "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 400 }}>
+                CRM Dashboard
+              </p>
+            </div>
           </div>
           {isMobile && (
             <button onClick={onCloseMobile} style={{
@@ -5334,49 +5360,69 @@ function Sidebar({ activeScreen, onNavigate, onLogout, perfil, mobileOpen, onClo
           )}
         </div>
 
+        {/* User Profile Section */}
         <div style={{
-          padding: isMobile ? "12px 16px" : "16px 20px",
-          borderBottom: `1px solid ${COLORS.darkMid}`,
+          background: "rgba(255,255,255,0.05)",
+          borderRadius: 10,
+          padding: "14px 12px",
+          margin: "12px 0 20px",
+          display: "flex",
+          gap: 10,
+          alignItems: "center",
         }}>
-          <p style={{ margin: 0, color: "white", fontSize: 13, fontWeight: 600 }}>
-            {perfil?.nombre_display || "Usuario"}
-          </p>
           <div style={{
-            background: COLORS.primary, color: "white",
-            padding: "4px 8px", borderRadius: 4, fontSize: 11,
-            fontWeight: 600, display: "inline-block", marginTop: 8,
-            textTransform: "uppercase",
+            width: 36, height: 36, borderRadius: 10,
+            background: COLORS.primary,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 16,
+            fontWeight: 600,
+            color: "white",
+            flexShrink: 0,
           }}>
-            {isAdmin ? "Administrador" : "Ejecutivo"}
+            {(perfil?.nombre_display || "U")[0]}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ margin: 0, color: "white", fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {perfil?.nombre_display || "Usuario"}
+            </p>
+            <div style={{
+              background: "rgba(5,150,105,0.15)", color: COLORS.primary,
+              padding: "2px 8px", borderRadius: 10, fontSize: 10,
+              fontWeight: 600, display: "inline-block", marginTop: 4,
+              textTransform: "uppercase", letterSpacing: "0.5px",
+            }}>
+              {isAdmin ? "Admin" : "Ejecutivo"}
+            </div>
           </div>
         </div>
 
-        <nav style={{ flex: 1, padding: "12px 8px", overflow: "auto" }}>
+        <nav style={{ flex: 1, padding: "8px 12px", overflow: "auto" }}>
           {menuItems.map((item) => (
             <button
               key={item.key}
               onClick={() => handleNav(item.key)}
               style={{
-                width: "100%", padding: "12px 16px",
+                width: "100%", padding: "11px 14px",
                 background: activeScreen === item.key ? COLORS.primary : "transparent",
-                color: activeScreen === item.key ? "white" : COLORS.textLight,
-                border: "none", borderRadius: 8, textAlign: "left",
-                fontSize: 14, fontWeight: activeScreen === item.key ? 600 : 500,
+                color: activeScreen === item.key ? "white" : "rgba(255,255,255,0.6)",
+                border: "none", borderRadius: 10, textAlign: "left",
+                fontSize: 13, fontWeight: activeScreen === item.key ? 600 : 500,
                 cursor: "pointer", display: "flex", alignItems: "center",
-                gap: 10, marginBottom: 4, transition: "all 0.2s ease",
+                gap: 12, marginBottom: 2, transition: "all 0.2s ease",
+                boxShadow: activeScreen === item.key ? "0 2px 8px rgba(5,150,105,0.3)" : "none",
               }}
             >
-              <span style={{ fontSize: 16 }}>{item.icon}</span>
+              <span style={{ fontSize: 16, width: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>{item.icon}</span>
               <span>{item.label}</span>
             </button>
           ))}
         </nav>
 
-        <div style={{ padding: "12px 8px", borderTop: `1px solid ${COLORS.darkMid}` }}>
+        <div style={{ padding: "12px 8px", borderTop: `1px solid rgba(255,255,255,0.08)` }}>
           <button onClick={() => { onLogout(); if (isMobile && onCloseMobile) onCloseMobile(); }} style={{
             width: "100%", padding: "12px 16px",
-            background: COLORS.red, color: "white", border: "none",
-            borderRadius: 8, fontSize: 14, fontWeight: 600,
+            background: "rgba(220,38,38,0.08)", color: COLORS.red, border: "none",
+            borderRadius: 10, fontSize: 13, fontWeight: 600,
             cursor: "pointer", display: "flex", alignItems: "center",
             gap: 10, transition: "all 0.2s ease",
           }}>
@@ -5446,7 +5492,7 @@ function EditableMetaCell({ value, onChange, isMoney }) {
           fontSize: 15,
           fontWeight: 700,
           border: `2px solid ${COLORS.primary}`,
-          borderRadius: 8,
+          borderRadius: 10,
           outline: "none",
           width: 130,
           fontFamily: "inherit",
@@ -5466,8 +5512,7 @@ function EditableMetaCell({ value, onChange, isMoney }) {
         color: COLORS.primary,
         background: "#F8FAF8",
         border: `1.5px dashed ${COLORS.border}`,
-        borderRadius: 8,
-        cursor: "pointer",
+        borderRadius: 10, cursor: "pointer",
         display: "inline-block",
         minWidth: 100,
         textAlign: "center",
@@ -5509,8 +5554,8 @@ function AddExecutiveForm({ onAdd, onClose, type }) {
             onChange={(e) => setNombre(e.target.value)}
             placeholder="Nombre del ejecutivo..."
             style={{
-              width: "100%", padding: "10px 12px", fontSize: 14,
-              border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
+              width: "100%", padding: "14px 16px", fontSize: 14,
+              border: `1.5px solid ${COLORS.border}`, borderRadius: 10,
               fontFamily: "inherit", outline: "none", boxSizing: "border-box",
             }}
           />
@@ -5525,23 +5570,21 @@ function AddExecutiveForm({ onAdd, onClose, type }) {
             onChange={(e) => setMeta(e.target.value)}
             placeholder="0"
             style={{
-              width: "100%", padding: "10px 12px", fontSize: 14,
-              border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
+              width: "100%", padding: "14px 16px", fontSize: 14,
+              border: `1.5px solid ${COLORS.border}`, borderRadius: 10,
               fontFamily: "inherit", outline: "none", boxSizing: "border-box",
             }}
           />
         </div>
         <button onClick={handleAdd} style={{
           padding: "10px 20px", fontSize: 13, fontWeight: 700, color: "#fff",
-          background: COLORS.primary, border: "none", borderRadius: 8,
-          cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap",
+          background: COLORS.primary, border: "none", borderRadius: 10, cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap",
         }}>
           Agregar
         </button>
         <button onClick={onClose} style={{
-          padding: "10px 14px", fontSize: 13, fontWeight: 600, color: COLORS.textLight,
-          background: "#F3F4F6", border: "none", borderRadius: 8,
-          cursor: "pointer", fontFamily: "inherit",
+          padding: "14px 16px", fontSize: 13, fontWeight: 600, color: COLORS.textLight,
+          background: "#F3F4F6", border: "none", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
         }}>
           Cancelar
         </button>
@@ -5607,7 +5650,7 @@ function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, typ
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
           <div>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: "#fff", margin: "0 0 2px", display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 20 }}>{icon}</span> {title}
+              <span style={{ fontSize: 24 }}>{icon}</span> {title}
             </h2>
             <p style={{ fontSize: 12, color: "#ffffff80", margin: 0 }}>{subtitle}</p>
           </div>
@@ -5635,7 +5678,7 @@ function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, typ
       </div>
 
       {/* Table */}
-      <div style={{ overflowX: "auto" }}>
+      <div style={{ overflowX: "auto", borderRadius: 16, overflow: "hidden" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F8FAFC" }}>
@@ -5659,7 +5702,7 @@ function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, typ
                 key={ej.id}
                 style={{
                   background: !ej.activo ? "#F9FAFB" : idx % 2 === 0 ? "#fff" : "#FAFBFA",
-                  borderBottom: `1px solid ${COLORS.border}`,
+                  borderBottom: `1px solid #F1F5F9`,
                   opacity: ej.activo ? 1 : 0.5,
                   transition: "opacity 0.2s",
                 }}
@@ -5691,8 +5734,7 @@ function ExecutiveTable({ title, subtitle, data, isMoney, accentColor, icon, typ
                     onChange={(e) => handleChangeTipo(ej.id, e.target.value)}
                     style={{
                       padding: "6px 10px", fontSize: 12, fontWeight: 600,
-                      border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-                      background: ej.tipo === "motos" ? `${COLORS.moto}15` : `${COLORS.primary}10`,
+                      border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: ej.tipo === "motos" ? `${COLORS.moto}15` : `${COLORS.primary}10`,
                       color: ej.tipo === "motos" ? COLORS.moto : COLORS.primary,
                       cursor: "pointer", fontFamily: "inherit", outline: "none",
                     }}
@@ -5781,15 +5823,15 @@ function CatalogoEjecutivos() {
 
         {/* Period + Actions */}
         <div style={{
-          background: "#fff", borderRadius: 14, padding: "18px 22px", marginBottom: 20,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: COLORS.card,
+            borderRadius: 16, padding: "18px 22px", marginBottom: 20,
+          boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
           display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-end",
         }}>
           <div>
             <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: COLORS.textLight, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Mes</label>
             <select value={mes} onChange={(e) => setMes(Number(e.target.value))} style={{
-              padding: "10px 14px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-              background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none", minWidth: 140,
+              padding: "14px 16px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none", minWidth: 140,
             }}>
               {MESES.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
             </select>
@@ -5797,8 +5839,7 @@ function CatalogoEjecutivos() {
           <div>
             <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: COLORS.textLight, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Año</label>
             <select value={anio} onChange={(e) => setAnio(Number(e.target.value))} style={{
-              padding: "10px 14px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
-              background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none",
+              padding: "14px 16px", fontSize: 14, border: `1.5px solid ${COLORS.border}`, borderRadius: 10, background: "#fff", fontFamily: "inherit", fontWeight: 600, cursor: "pointer", outline: "none",
             }}>
               {[2025, 2026, 2027, 2028].map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
@@ -6015,10 +6056,10 @@ function MoveModal({ client, onMove, onClose }) {
       zIndex: 1000, padding: 16,
     }}>
       <div style={{
-        background: "#fff", borderRadius: 16, padding: "28px 24px",
-        maxWidth: 440, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+        background: COLORS.card, borderRadius: 16, padding: "28px 24px",
+        maxWidth: 440, width: "100%", boxShadow: COLORS.shadow,
       }}>
-        <h3 style={{ fontSize: 18, fontWeight: 700, color: COLORS.dark, margin: "0 0 6px" }}>
+        <h3 style={{ fontSize: 24, fontWeight: 800, color: COLORS.dark, letterSpacing: "-0.5px", margin: "0 0 6px" }}>
           Mover de etapa
         </h3>
         <p style={{ fontSize: 13, color: COLORS.textLight, margin: "0 0 20px" }}>
@@ -6137,8 +6178,8 @@ function AddModal({ onAdd, onClose, ejecutivoTipo }) {
 
   const labelStyle = { display: "block", fontSize: 12, fontWeight: 600, color: COLORS.text, marginBottom: 4 };
   const inputStyle = {
-    width: "100%", padding: "10px 12px", fontSize: 14,
-    border: `1.5px solid ${COLORS.border}`, borderRadius: 8,
+    width: "100%", padding: "14px 16px", fontSize: 14,
+    border: `1.5px solid ${COLORS.border}`, borderRadius: 10,
     fontFamily: "inherit", outline: "none", boxSizing: "border-box",
   };
 
@@ -6153,7 +6194,7 @@ function AddModal({ onAdd, onClose, ejecutivoTipo }) {
         maxWidth: 440, width: "100%", maxHeight: "90vh", overflowY: "auto",
         boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
       }}>
-        <h3 style={{ fontSize: 18, fontWeight: 700, color: COLORS.dark, margin: "0 0 20px" }}>
+        <h3 style={{ fontSize: 24, fontWeight: 800, color: COLORS.dark, letterSpacing: "-0.5px", margin: "0 0 20px" }}>
           + Nuevo cliente
         </h3>
         <div style={{ display: "grid", gap: 14 }}>
@@ -6229,10 +6270,10 @@ function CommentModal({ client, onSave, onClose }) {
       zIndex: 1000, padding: 16,
     }}>
       <div style={{
-        background: "#fff", borderRadius: 16, padding: "28px 24px",
-        maxWidth: 480, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+        background: COLORS.card, borderRadius: 16, padding: "28px 24px",
+        maxWidth: 480, width: "100%", boxShadow: COLORS.shadow,
       }}>
-        <h3 style={{ fontSize: 18, fontWeight: 700, color: COLORS.dark, margin: "0 0 4px" }}>
+        <h3 style={{ fontSize: 24, fontWeight: 800, color: COLORS.dark, letterSpacing: "-0.5px", margin: "0 0 4px" }}>
           💬 Comentario
         </h3>
         <p style={{ fontSize: 13, color: COLORS.textLight, margin: "0 0 16px" }}>
@@ -6290,8 +6331,8 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick, onComme
 
   return (
     <div style={{
-      background: "#fff", borderRadius: 14, padding: "18px 20px",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+      background: COLORS.card, borderRadius: 16, padding: "20px",
+      boxShadow: COLORS.shadow,
       border: `1px solid ${COLORS.border}`,
       borderLeft: `4px solid ${stageConfig.color}`,
       opacity: isRejected ? 0.65 : 1,
@@ -6358,8 +6399,8 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick, onComme
             const filled = idx <= currentIdx;
             return (
               <div key={stage.key} style={{
-                flex: 1, height: 6, borderRadius: 3,
-                background: filled ? stageConfig.color : "#E2E8F0",
+                flex: 1, height: 5, borderRadius: 3,
+                background: filled ? COLORS.primary : "#E2E8F0",
                 transition: "background 0.3s",
               }} />
             );
@@ -6371,7 +6412,7 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick, onComme
       {client.actualizacion && (
         <div style={{
           background: isRejected ? COLORS.redBg : "#F8FAFC",
-          borderRadius: 8, padding: "10px 12px", marginBottom: 12,
+          borderRadius: 10, padding: "14px 16px", marginBottom: 12,
           border: `1px solid ${isRejected ? COLORS.red + "30" : COLORS.border}`,
         }}>
           <p style={{ fontSize: 10, fontWeight: 700, color: isRejected ? COLORS.red : COLORS.textLight, margin: "0 0 2px", textTransform: "uppercase" }}>
@@ -6389,9 +6430,9 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick, onComme
           <button
             onClick={() => onMoveClick(client)}
             style={{
-              flex: 2, padding: "10px", fontSize: 13, fontWeight: 700,
+              flex: 2, padding: "10px", fontSize: 13, fontWeight: 600,
               color: "#fff", background: COLORS.primary, border: "none",
-              borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+              borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
             }}
           >
             Mover etapa ↔
@@ -6399,9 +6440,9 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick, onComme
           <button
             onClick={() => onRejectClick(client)}
             style={{
-              flex: 1, padding: "10px", fontSize: 12, fontWeight: 600,
+              flex: 1, padding: "10px", fontSize: 13, fontWeight: 600,
               color: COLORS.red, background: COLORS.redBg, border: `1px solid ${COLORS.red}30`,
-              borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+              borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
             }}
           >
             Rechazar
@@ -6410,7 +6451,7 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick, onComme
       )}
       {isDispersed && (
         <div style={{
-          background: COLORS.greenBg, borderRadius: 8, padding: "10px", marginBottom: 8,
+          background: COLORS.greenBg, borderRadius: 10, padding: "10px", marginBottom: 8,
           textAlign: "center", border: `1px solid ${COLORS.green}30`,
         }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.green }}>
@@ -6423,9 +6464,9 @@ function ClientCard({ client, onMoveClick, onRejectClick, onDeleteClick, onComme
         <button
           onClick={() => onCommentClick(client)}
           style={{
-            width: "100%", padding: "9px", fontSize: 12, fontWeight: 600,
+            width: "100%", padding: "10px", fontSize: 13, fontWeight: 600,
             color: COLORS.blue, background: COLORS.blueBg, border: `1px solid ${COLORS.blue}30`,
-            borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+            borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
           }}
         >
           💬 Agregar / editar comentario
@@ -6537,10 +6578,10 @@ function PortalEjecutivo({ perfil }) {
     <button
       onClick={() => setFilterEstatus(key)}
       style={{
-        padding: "8px 14px", fontSize: 12, fontWeight: filterEstatus === key ? 700 : 500,
+        padding: "10px 16px", fontSize: 13, fontWeight: 600,
         color: filterEstatus === key ? "#fff" : COLORS.textLight,
-        background: filterEstatus === key ? COLORS.primary : "#F3F4F6",
-        border: "none", borderRadius: 20, cursor: "pointer", fontFamily: "inherit",
+        background: filterEstatus === key ? COLORS.dark : "#F3F4F6",
+        border: "none", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
         transition: "all 0.2s", whiteSpace: "nowrap",
       }}
     >
@@ -6569,8 +6610,9 @@ function PortalEjecutivo({ perfil }) {
 
         {/* Month Selector */}
         <div style={{
-          background: "#fff", borderRadius: 14, padding: "14px 20px", marginBottom: 16,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: COLORS.card,
+            borderRadius: 16, padding: "14px 20px", marginBottom: 16,
+          boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
           display: "flex", alignItems: "center", gap: 14, justifyContent: "center",
         }}>
           <button
@@ -6619,11 +6661,12 @@ function PortalEjecutivo({ perfil }) {
 
         {/* Pipeline Summary */}
         <div style={{
-          background: "#fff", borderRadius: 14, padding: "16px 20px", marginBottom: 16,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: `1px solid ${COLORS.border}`,
+          background: COLORS.card,
+            borderRadius: 16, padding: "20px", marginBottom: 16,
+          boxShadow: COLORS.shadow, border: `1px solid ${COLORS.border}`,
           overflowX: "auto",
         }}>
-          <div style={{ display: "flex", gap: 6, minWidth: 600 }}>
+          <div style={{ display: "flex", gap: 4, minWidth: 600 }}>
             {STAGES_PORTAL.map((stage, idx) => {
               const count = clients.filter((c) => c.estatus === stage.key && c.estatus !== "Rechazado").length;
               return (
@@ -6631,20 +6674,19 @@ function PortalEjecutivo({ perfil }) {
                   <div
                     onClick={() => setFilterEstatus(stage.key)}
                     style={{
-                      flex: 1, textAlign: "center", padding: "12px 8px", borderRadius: 10,
-                      background: filterEstatus === stage.key ? stage.bg : "transparent",
-                      border: filterEstatus === stage.key ? `2px solid ${stage.color}50` : "2px solid transparent",
+                      flex: 1, textAlign: "center", padding: "14px 8px", borderRadius: 10,
+                      background: stage.bg,
                       cursor: "pointer", transition: "all 0.2s",
                     }}
                   >
-                    <span style={{ fontSize: 20 }}>{stage.icon}</span>
-                    <p style={{ fontSize: 10, color: COLORS.textLight, margin: "4px 0 0", fontWeight: 600, textTransform: "uppercase" }}>
+                    <span style={{ fontSize: 24 }}>{stage.icon}</span>
+                    <p style={{ fontSize: 10, color: COLORS.textLight, margin: "4px 0 0", fontWeight: 700, textTransform: "uppercase" }}>
                       {stage.label.split(" ")[0]}
                     </p>
-                    <p style={{ fontSize: 22, fontWeight: 800, color: stage.color, margin: "2px 0 0" }}>{count}</p>
+                    <p style={{ fontSize: 28, fontWeight: 800, color: stage.color, margin: "2px 0 0" }}>{count}</p>
                   </div>
                   {idx < STAGES_PORTAL.length - 1 && (
-                    <span style={{ color: "#D1D5DB", fontSize: 18, padding: "0 2px" }}>›</span>
+                    <span style={{ color: "#D1D5DB", fontSize: 18, display: "flex", alignItems: "center", padding: "0 2px" }}>›</span>
                   )}
                 </div>
               );
@@ -6666,10 +6708,10 @@ function PortalEjecutivo({ perfil }) {
           <button
             onClick={() => setShowAdd(true)}
             style={{
-              padding: "10px 20px", fontSize: 14, fontWeight: 700,
+              padding: "10px 16px", fontSize: 13, fontWeight: 600,
               color: "#fff", background: COLORS.primary, border: "none",
-              borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
-              boxShadow: `0 3px 10px ${COLORS.primary}40`,
+              borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+              marginLeft: "auto",
             }}
           >
             + Nuevo Cliente
@@ -6714,8 +6756,8 @@ function PortalEjecutivo({ perfil }) {
           display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999,
         }}>
           <div style={{
-            background: "#fff", borderRadius: 16, padding: "28px 32px", maxWidth: 420,
-            width: "90%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+            background: COLORS.card, borderRadius: 16, padding: "28px 32px", maxWidth: 420,
+            width: "90%", boxShadow: COLORS.shadow,
           }}>
             <h3 style={{ fontSize: 17, fontWeight: 800, color: COLORS.dark, margin: "0 0 8px" }}>
               ¿Eliminar cliente?
@@ -6730,7 +6772,7 @@ function PortalEjecutivo({ perfil }) {
               <button
                 onClick={() => setDeleteConfirmPortal(null)}
                 style={{
-                  padding: "10px 20px", borderRadius: 8, border: `1.5px solid ${COLORS.border}`,
+                  padding: "10px 20px", borderRadius: 10, border: `1.5px solid ${COLORS.border}`,
                   background: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer",
                   color: COLORS.textLight, fontFamily: "inherit",
                 }}
@@ -6743,7 +6785,7 @@ function PortalEjecutivo({ perfil }) {
                   setDeleteConfirmPortal(null);
                 }}
                 style={{
-                  padding: "10px 20px", borderRadius: 8, border: "none",
+                  padding: "10px 20px", borderRadius: 10, border: "none",
                   background: COLORS.red, color: "#fff", fontSize: 13, fontWeight: 700,
                   cursor: "pointer", fontFamily: "inherit",
                 }}
@@ -6941,11 +6983,11 @@ function ExportExcel() {
         {/* Year Selector */}
         <div
           style={{
-            background: "#fff",
-            borderRadius: 14,
+            background: COLORS.card,
+            borderRadius: 16,
             padding: "20px 24px",
             marginBottom: 18,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+            boxShadow: COLORS.shadow,
             border: `1px solid ${COLORS.border}`,
             display: "flex",
             flexWrap: "wrap",
@@ -6971,11 +7013,10 @@ function ExportExcel() {
               value={anio}
               onChange={(e) => setAnio(Number(e.target.value))}
               style={{
-                padding: "10px 14px",
+                padding: "14px 16px",
                 fontSize: 14,
                 border: `1.5px solid ${COLORS.border}`,
-                borderRadius: 8,
-                background: "#fff",
+                borderRadius: 10, background: "#fff",
                 fontFamily: "inherit",
                 fontWeight: 600,
                 cursor: "pointer",
@@ -7031,10 +7072,10 @@ function ExportExcel() {
           {/* Option 1: Full Year */}
           <div
             style={{
-              background: "#fff",
-              borderRadius: 14,
+              background: COLORS.card,
+            borderRadius: 16,
               padding: "24px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+              boxShadow: COLORS.shadow,
               border: `1px solid ${COLORS.border}`,
               borderLeft: `4px solid ${COLORS.primary}`,
             }}
@@ -7060,7 +7101,7 @@ function ExportExcel() {
                   key={mes}
                   style={{
                     padding: "4px 10px",
-                    borderRadius: 6,
+                    borderRadius: 10,
                     fontSize: 11,
                     fontWeight: 600,
                     background: COLORS.primaryLight,
@@ -7073,7 +7114,7 @@ function ExportExcel() {
               <span
                 style={{
                   padding: "4px 10px",
-                  borderRadius: 6,
+                  borderRadius: 10,
                   fontSize: 11,
                   fontWeight: 600,
                   background: COLORS.purpleBg,
@@ -7116,10 +7157,10 @@ function ExportExcel() {
           {/* Option 2: Single Month */}
           <div
             style={{
-              background: "#fff",
-              borderRadius: 14,
+              background: COLORS.card,
+            borderRadius: 16,
               padding: "24px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+              boxShadow: COLORS.shadow,
               border: `1px solid ${COLORS.border}`,
               borderLeft: `4px solid ${COLORS.yellow}`,
             }}
@@ -7154,11 +7195,10 @@ function ExportExcel() {
                 onChange={(e) => setMesSeleccionado(Number(e.target.value))}
                 style={{
                   width: "100%",
-                  padding: "10px 14px",
+                  padding: "14px 16px",
                   fontSize: 14,
                   border: `1.5px solid ${COLORS.border}`,
-                  borderRadius: 8,
-                  background: "#F8FAF8",
+                  borderRadius: 10, background: "#F8FAF8",
                   fontFamily: "inherit",
                   fontWeight: 600,
                   cursor: "pointer",
@@ -7178,8 +7218,7 @@ function ExportExcel() {
               <div
                 style={{
                   background: COLORS.yellowBg,
-                  borderRadius: 8,
-                  padding: "10px 14px",
+                  borderRadius: 10, padding: "14px 16px",
                   marginBottom: 16,
                   display: "flex",
                   gap: 16,
@@ -7305,8 +7344,7 @@ function ExportExcel() {
                     key={sheet.name}
                     style={{
                       padding: "8px 14px",
-                      borderRadius: 8,
-                      background: sheet.name === "Resumen" ? COLORS.purpleBg : COLORS.primaryLight,
+                      borderRadius: 10, background: sheet.name === "Resumen" ? COLORS.purpleBg : COLORS.primaryLight,
                       border: `1px solid ${sheet.name === "Resumen" ? COLORS.purple + "30" : COLORS.primary + "30"}`,
                     }}
                   >
@@ -7337,10 +7375,9 @@ function ExportExcel() {
         {/* Data Preview Table */}
         <div
           style={{
-            background: "#fff",
-            borderRadius: 14,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-            border: `1px solid ${COLORS.border}`,
+            background: COLORS.card,
+            borderRadius: 16,
+            boxShadow: COLORS.shadow,            border: `1px solid ${COLORS.border}`,
             overflow: "hidden",
             marginBottom: 18,
           }}
@@ -7348,7 +7385,7 @@ function ExportExcel() {
           <div
             style={{
               padding: "16px 20px",
-              borderBottom: `1px solid ${COLORS.border}`,
+              borderBottom: `1px solid #F1F5F9`,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -7362,15 +7399,15 @@ function ExportExcel() {
             </span>
           </div>
 
-          <div style={{ overflowX: "auto" }}>
+          <div style={{ overflowX: "auto", borderRadius: 16, overflow: "hidden" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
               <thead>
-                <tr style={{ background: COLORS.dark }}>
+                <tr style={{ background: "#F8FAFC" }}>
                   {["Mes", "Ejecutivo", "Cliente", "Producto", "Monto", "Estatus", "Fecha inicio"].map((h) => (
                     <th
                       key={h}
                       style={{
-                        padding: "10px 12px",
+                        padding: "14px 16px",
                         fontSize: 10,
                         fontWeight: 700,
                         color: "#fff",
@@ -7378,7 +7415,7 @@ function ExportExcel() {
                         textTransform: "uppercase",
                         letterSpacing: 0.5,
                         whiteSpace: "nowrap",
-                        borderBottom: `3px solid ${COLORS.primary}`,
+                        borderBottom: `2px solid ${COLORS.border}`,
                       }}
                     >
                       {h}
@@ -7404,11 +7441,11 @@ function ExportExcel() {
                       <tr
                         key={idx}
                         style={{
-                          background: idx % 2 === 0 ? "#fff" : "#FAFBFA",
-                          borderBottom: `1px solid ${COLORS.border}`,
+                          background: idx % 2 === 0 ? "#fff" : "#F8FAFB",
+                          borderBottom: `1px solid #F1F5F9`,
                         }}
                       >
-                        <td style={{ padding: "10px 12px" }}>
+                        <td style={{ padding: "14px 16px" }}>
                           <span
                             style={{
                               fontSize: 11,
@@ -7422,15 +7459,15 @@ function ExportExcel() {
                             {MESES[client.mes_registro - 1].slice(0, 3)}
                           </span>
                         </td>
-                        <td style={{ padding: "10px 12px" }}>
+                        <td style={{ padding: "14px 16px" }}>
                           <p style={{ fontSize: 12, fontWeight: 600, color: COLORS.text, margin: 0 }}>
                             {client.ejecutivo.split(" ").slice(0, 2).join(" ")}
                           </p>
                         </td>
-                        <td style={{ padding: "10px 12px" }}>
+                        <td style={{ padding: "14px 16px" }}>
                           <p style={{ fontSize: 12, color: COLORS.text, margin: 0 }}>{client.nombre_cliente}</p>
                         </td>
-                        <td style={{ padding: "10px 12px" }}>
+                        <td style={{ padding: "14px 16px" }}>
                           <span
                             style={{
                               fontSize: 10,
@@ -7441,12 +7478,12 @@ function ExportExcel() {
                             {client.producto === "Crédito de nómina" ? "Nómina" : client.producto.includes("Arrendamiento") ? "Arrend." : "Financ."}
                           </span>
                         </td>
-                        <td style={{ padding: "10px 12px" }}>
+                        <td style={{ padding: "14px 16px" }}>
                           <p style={{ fontSize: 12, fontWeight: 600, color: COLORS.text, margin: 0 }}>
                             {formatMoney(client.monto)}
                           </p>
                         </td>
-                        <td style={{ padding: "10px 12px" }}>
+                        <td style={{ padding: "14px 16px" }}>
                           <span
                             style={{
                               display: "inline-block",
@@ -7461,7 +7498,7 @@ function ExportExcel() {
                             {client.estatus}
                           </span>
                         </td>
-                        <td style={{ padding: "10px 12px" }}>
+                        <td style={{ padding: "14px 16px" }}>
                           <p style={{ fontSize: 11, color: COLORS.textLight, margin: 0 }}>{client.fecha_inicio}</p>
                         </td>
                       </tr>
@@ -7604,11 +7641,14 @@ export default function App() {
       )}
 
       <main style={{
-        marginLeft: isMobile ? 0 : 240,
+        marginLeft: isMobile ? 0 : 260,
         marginTop: isMobile ? 56 : 0,
+        padding: "28px 32px",
         flex: 1,
         overflowY: "auto",
         width: isMobile ? "100%" : undefined,
+        fontFamily: "'Inter', -apple-system, sans-serif",
+        background: COLORS.bg,
       }}>
         {isEjecutivo ? (
           <PortalEjecutivo perfil={perfil} />
